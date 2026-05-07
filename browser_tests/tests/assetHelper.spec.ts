@@ -133,6 +133,71 @@ test.describe('AssetHelper', () => {
       expect(data.assets[0].id).toBe(STABLE_CHECKPOINT.id)
     })
 
+    test('GET /assets ignores exclude_tags parameter (no longer supported)', async ({
+      comfyPage,
+      assetApi
+    }) => {
+      // Before this PR, exclude_tags would filter out assets with those tags.
+      // After this PR, the parameter is silently ignored and all matching
+      // include_tags assets are returned.
+      assetApi.configure(
+        withAsset(STABLE_CHECKPOINT),
+        withAsset({
+          ...STABLE_INPUT_IMAGE,
+          id: 'input-with-extra-tag',
+          tags: ['input', 'extra']
+        })
+      )
+      await assetApi.mock()
+
+      // Passing exclude_tags=extra should have NO effect on filtering
+      const { body } = await assetApi.fetch(
+        `${comfyPage.url}/api/assets?exclude_tags=extra`
+      )
+      const data = body as { assets: Array<{ id: string }> }
+      // Both assets are returned; exclude_tags is ignored
+      expect(data.assets).toHaveLength(2)
+      const ids = data.assets.map((a) => a.id)
+      expect(ids).toContain(STABLE_CHECKPOINT.id)
+      expect(ids).toContain('input-with-extra-tag')
+    })
+
+    test('GET /assets returns all assets when include_tags is absent', async ({
+      comfyPage,
+      assetApi
+    }) => {
+      assetApi.configure(
+        withAsset(STABLE_CHECKPOINT),
+        withAsset(STABLE_INPUT_IMAGE)
+      )
+      await assetApi.mock()
+
+      // No include_tags param — all assets should be returned
+      const { body } = await assetApi.fetch(`${comfyPage.url}/api/assets`)
+      const data = body as { assets: Array<{ id: string }> }
+      expect(data.assets).toHaveLength(2)
+    })
+
+    test('GET /assets does not trim whitespace from include_tags values', async ({
+      comfyPage,
+      assetApi
+    }) => {
+      // parseAssetTagParam was removed; tag matching now uses raw .split(',')
+      // so " checkpoints" (with leading space) does NOT match "checkpoints"
+      assetApi.configure(
+        withAsset(STABLE_CHECKPOINT),
+        withAsset(STABLE_INPUT_IMAGE)
+      )
+      await assetApi.mock()
+
+      // Tag value has leading whitespace — should not match 'checkpoints'
+      const { body } = await assetApi.fetch(
+        `${comfyPage.url}/api/assets?include_tags=%20checkpoints`
+      )
+      const data = body as { assets: Array<{ id: string }> }
+      expect(data.assets).toHaveLength(0)
+    })
+
     test('GET /assets/:id returns single asset or 404', async ({
       comfyPage,
       assetApi
