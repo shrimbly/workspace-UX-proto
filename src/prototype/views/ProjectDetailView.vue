@@ -30,7 +30,7 @@
           {{ t(`prototype.projectTier.${project.tier}`) }}
         </span>
       </div>
-      <div v-if="project" class="flex items-center gap-2">
+      <div v-if="project && !isAssetOnlyGuest" class="flex items-center gap-2">
         <button
           v-if="project.tier !== 'private'"
           type="button"
@@ -158,22 +158,17 @@ const project = computed(() =>
   fixture.value.projects.find((p) => p.id === projectId)
 )
 
-const isGuestPersona = computed(
-  () =>
-    currentPersonaId.value === 'project-collaborator' ||
-    currentPersonaId.value === 'asset-only-guest'
+// Asset-only Guests see the project as a transit shell only — workflows
+// are filtered to just their accessible assets, and the share / media-
+// assets / new-workflow CTAs are hidden.
+const isAssetOnlyGuest = computed(
+  () => currentPersonaId.value === 'asset-only-guest'
 )
 
-const backLabel = computed(() =>
-  isGuestPersona.value
-    ? t('prototype.views.sharedAsset.back')
-    : t('prototype.views.project.back')
-)
+const backLabel = computed(() => t('prototype.views.project.back'))
 
 function onBack() {
-  uiStore.go(
-    isGuestPersona.value ? { kind: 'shared-with-me' } : { kind: 'projects' }
-  )
+  uiStore.go({ kind: 'projects' })
 }
 
 const workflows = computed(() =>

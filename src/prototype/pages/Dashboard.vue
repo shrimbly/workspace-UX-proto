@@ -36,11 +36,6 @@
           <RecentsView v-else-if="activeView.kind === 'recents'" />
           <HubView v-else-if="activeView.kind === 'hub'" />
           <MembersView v-else-if="activeView.kind === 'members'" />
-          <SharedWithMeView v-else-if="activeView.kind === 'shared-with-me'" />
-          <SharedAssetView
-            v-else-if="activeView.kind === 'shared-asset'"
-            :asset-id="activeView.assetId"
-          />
           <SettingsView v-else-if="activeView.kind === 'settings'" />
         </template>
       </main>
@@ -71,8 +66,6 @@ import ProjectDetailView from '../views/ProjectDetailView.vue'
 import ProjectsView from '../views/ProjectsView.vue'
 import RecentsView from '../views/RecentsView.vue'
 import SettingsView from '../views/SettingsView.vue'
-import SharedAssetView from '../views/SharedAssetView.vue'
-import SharedWithMeView from '../views/SharedWithMeView.vue'
 
 const uiStore = usePrototypeUiStore()
 const { activeView } = storeToRefs(uiStore)

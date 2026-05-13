@@ -17,8 +17,6 @@ type ActiveView =
   | { kind: 'hub' }
   | { kind: 'members' }
   | { kind: 'settings' }
-  | { kind: 'shared-with-me' }
-  | { kind: 'shared-asset'; assetId: string }
 
 export const usePrototypeUiStore = defineStore('prototype-ui', () => {
   const activeView = ref<ActiveView>({ kind: 'drafts' })

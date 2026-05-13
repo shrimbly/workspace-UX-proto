@@ -70,27 +70,37 @@ export const usePrototypePersonaStore = defineStore('prototype-persona', () => {
       .toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt))
   })
 
-  // Cross-workspace shared content for guest personas. Driven by
-  // ../IA_Plan/wiki/concepts/prototype-test-coverage.md.
+  // --- Notifications ---------------------------------------------------
   //
-  // sharedProjects: projects (any workspace) where current user has
-  // access and that aren't their own Drafts. Drives the Project
-  // Collaborator's Shared with me list.
-  const sharedProjects = computed(() =>
-    fixture.value.projects.filter((p) => !p.isDrafts && p.currentUserHasAccess)
-  )
+  // Cross-workspace alerts. Surfaced via the top-bar popover. Per
+  // prototype/design-decisions.md 2026-05-14 — replaces the prior
+  // "Shared with me" tray for Guest personas; the in-workspace nav now
+  // carries shared content directly, so notifications are the only
+  // cross-workspace cue.
 
-  // sharedAssets: workflows/apps (any workspace) where the current user
-  // appears in access[] and is not the owner. Drives the Asset-only
-  // Guest's Shared with me list.
-  const sharedAssets = computed(() =>
-    fixture.value.workflows.filter(
-      (w) =>
-        w.ownerUserId !== fixture.value.currentUser.id &&
-        (w.access?.some((a) => a.userId === fixture.value.currentUser.id) ??
-          false)
+  const sortedNotifications = computed(() =>
+    [...fixture.value.notifications].sort((a, b) =>
+      b.createdAt.localeCompare(a.createdAt)
     )
   )
+
+  const unreadNotificationCount = computed(
+    () => fixture.value.notifications.filter((n) => !n.readAt).length
+  )
+
+  function markNotificationRead(id: string) {
+    const today = new Date().toISOString().slice(0, 10)
+    fixture.value.notifications = fixture.value.notifications.map((n) =>
+      n.id === id && !n.readAt ? { ...n, readAt: today } : n
+    )
+  }
+
+  function markAllNotificationsRead() {
+    const today = new Date().toISOString().slice(0, 10)
+    fixture.value.notifications = fixture.value.notifications.map((n) =>
+      n.readAt ? n : { ...n, readAt: today }
+    )
+  }
 
   function setPersona(id: PersonaId) {
     currentPersonaId.value = id
@@ -393,8 +403,10 @@ export const usePrototypePersonaStore = defineStore('prototype-persona', () => {
     draftsWorkflowCount,
     visibleProjects,
     recentWorkflows,
-    sharedProjects,
-    sharedAssets,
+    sortedNotifications,
+    unreadNotificationCount,
+    markNotificationRead,
+    markAllNotificationsRead,
     personas,
     setPersona,
     setCurrentWorkspace,

@@ -259,6 +259,35 @@ export type RoleGrants = Record<DelegableCapability, boolean>
 // filesystem-backed library (Outputs replaces Prompts).
 export type PersonaMode = 'cloud' | 'local'
 
+// Cross-workspace activity surfaced through the top-bar notifications
+// popover. Drives the alert path for Guest personas who otherwise have
+// no in-workspace cue that something changed in another workspace.
+//
+//   asset-grant      — granted access to a specific asset
+//   project-grant    — added to a project
+//   workspace-invite — invited to a new workspace
+//   asset-update     — owner changed a shared asset
+export type NotificationKind =
+  | 'asset-grant'
+  | 'project-grant'
+  | 'workspace-invite'
+  | 'asset-update'
+
+export interface NotificationTarget {
+  workspaceId: string
+  projectId?: string
+  assetId?: string
+}
+
+export interface Notification {
+  id: string
+  kind: NotificationKind
+  actorUserId: string
+  target: NotificationTarget
+  createdAt: string
+  readAt?: string
+}
+
 export interface PersonaFixture {
   mode: PersonaMode
   currentUser: User
@@ -276,6 +305,7 @@ export interface PersonaFixture {
   billing: WorkspaceBilling | null
   memberCreditLimits: MemberCreditLimit[]
   hubSubmissions: HubSubmission[]
+  notifications: Notification[]
 }
 
 export interface PersonaDef {

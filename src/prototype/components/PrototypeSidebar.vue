@@ -52,17 +52,6 @@
       />
 
       <SidebarItem
-        v-if="isGuestPersona"
-        :label="t('prototype.sidebar.sharedWithMe')"
-        icon="icon-[lucide--inbox]"
-        :active="
-          activeView.kind === 'shared-with-me' ||
-          activeView.kind === 'shared-asset'
-        "
-        @click="uiStore.go({ kind: 'shared-with-me' })"
-      />
-
-      <SidebarItem
         v-if="showDiscover"
         :label="t('prototype.sidebar.templates')"
         icon="icon-[lucide--layout-template]"
@@ -84,7 +73,7 @@
           @click="uiStore.go({ kind: 'drafts' })"
         />
         <SidebarItem
-          v-if="isCloudMode && !isSoloPersona && !isGuestPersona"
+          v-if="isCloudMode && !isSoloPersona"
           :label="t('prototype.sidebar.projects')"
           icon="icon-[lucide--folder]"
           :active="

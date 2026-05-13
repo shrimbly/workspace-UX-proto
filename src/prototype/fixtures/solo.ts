@@ -116,5 +116,6 @@ export const soloFixture: PersonaFixture = {
     invoices: []
   },
   memberCreditLimits: [],
-  hubSubmissions: []
+  hubSubmissions: [],
+  notifications: []
 }

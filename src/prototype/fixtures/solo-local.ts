@@ -79,5 +79,6 @@ export const soloLocalFixture: PersonaFixture = {
   },
   billing: null,
   memberCreditLimits: [],
-  hubSubmissions: []
+  hubSubmissions: [],
+  notifications: []
 }

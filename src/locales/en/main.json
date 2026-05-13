@@ -21,7 +21,6 @@
       "searchPlaceholder": "Search",
       "guestEmptyState": "Tailored guest view coming in a later pass.",
       "guest": "Guest",
-      "sharedWithMe": "Shared with me",
       "workspaces": "Workspaces",
       "searchWorkspaces": "Search workspaces",
       "createWorkspace": "Create a workspace",
@@ -56,7 +55,8 @@
       "home": "Home",
       "newTab": "New blank workflow",
       "closeTab": "Close tab",
-      "feedback": "Send feedback"
+      "feedback": "Send feedback",
+      "notifications": "Notifications"
     },
     "persona": {
       "label": "Persona"
@@ -84,6 +84,25 @@
       "allProjects": "All projects",
       "allFolders": "All folders",
       "tagsEmpty": "No tags on assets in this section yet."
+    },
+    "editor": {
+      "projectChip": {
+        "myWorkflows": "My Workflows",
+        "inProject": "In project",
+        "notInProject": "Not in a project",
+        "moveToProject": "Move to another project…",
+        "promoteToProject": "Promote to project…",
+        "saveOutputs": "Save outputs",
+        "saveLocal": "Local",
+        "saveCloud": "Cloud",
+        "saveLocalHint": "Outputs are written to the Comfy output directory on disk.",
+        "saveCloudProjectHint": "Outputs will be tracked under {project} in your workspace.",
+        "saveCloudMyWorkflowsHint": "Outputs will land in your cloud My Workflows.",
+        "cloudSignInHint": "Sign in to save outputs to the cloud.",
+        "demoLabel": "Demo state",
+        "demoInProject": "In project",
+        "demoMyWorkflows": "My Workflows"
+      }
     },
     "views": {
       "drafts": {
@@ -195,37 +214,21 @@
         "title": "Comfy Hub",
         "subtitle": "Discover and start from published workflows and templates."
       },
-      "sharedWithMe": {
-        "title": "Shared with me",
-        "subtitle": "Projects and assets other people have given you access to.",
-        "empty": "Nothing has been shared with you yet.",
-        "projectsHeading": "Projects",
-        "assetsHeading": "Assets",
-        "filterAll": "All workspaces",
-        "inWorkspace": "in {workspace}",
-        "inProject": "in {project}",
-        "openProject": "Open project",
-        "openAsset": "Open"
-      },
-      "sharedAsset": {
-        "back": "Back to Shared with me",
-        "notFound": "This asset is no longer available to you.",
-        "sourceLabel": "Source",
-        "sourceWorkspaceLabel": "Workspace",
-        "sourceProjectLabel": "Project",
-        "sourceProjectHidden": "Hidden (no project-level access)",
-        "yourRoleLabel": "Your role",
-        "kindLabel": "Type",
+      "notifications": {
+        "title": "Notifications",
+        "empty": "You're all caught up.",
+        "markAllRead": "Mark all read",
+        "in": "in {workspace}",
         "kind": {
-          "workflow": "Workflow",
-          "app": "App"
+          "asset-grant": "{actor} gave you access to {asset}",
+          "asset-update": "{actor} updated {asset}",
+          "project-grant": "{actor} added you to {project}",
+          "workspace-invite": "{actor} invited you to {workspace}"
         },
-        "runWorkflowMode": "Run in workflow mode",
-        "runAppMode": "Run in app mode",
-        "fork": "Fork",
-        "forkBlocked": "App Runner cannot fork — only the workflow Owner or Runners can.",
-        "workflowModeBlocked": "App Runner cannot view the graph — app mode only.",
-        "hostPaysHint": "Runs are charged to the host workspace ({workspace})."
+        "unknownActor": "Someone",
+        "unknownAsset": "an asset",
+        "unknownProject": "a project",
+        "unknownWorkspace": "a workspace"
       },
       "assetRole": {
         "owner": "Owner",

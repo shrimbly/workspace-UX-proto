@@ -1,11 +1,11 @@
 // Implements:
 //   persona:  ../IA_Plan/wiki/concepts/personas.md — Tier 1, #5 Asset-only Guest
+//             (revised — project shells visible, see
+//             prototype/design-decisions.md 2026-05-14)
 //   concept:  ../IA_Plan/wiki/concepts/three-level-permissions.md
 //   matrix:   ../IA_Plan/wiki/concepts/prototype-test-coverage.md
 //             — Tomás has Runner on "Coke can hero" in Comfy Org and
 //               App Runner on "Brand color tuner" in Studio Atlas.
-//   open-q:   ../IA_Plan/wiki/open-questions.md#zero-state-for-asset-only-guest
-//             — Multi-workspace tray exercises the unresolved zero state.
 
 import { adminFixture } from './admin'
 import type {
@@ -86,17 +86,40 @@ const tomasDraftsAtlas: Project = {
   currentUserHasAccess: true
 }
 
-// Studio Atlas's only project context — Tomás doesn't see the project
-// itself, just the asset.
-const atlasHiddenProject: Project = {
+// Studio Atlas's only project context — Tomás sees the project as a
+// transit shell (sidebar entry + project detail page) but the project
+// detail is filtered to just his accessible asset, and all
+// member/share/create affordances are hidden. See
+// prototype/design-decisions.md 2026-05-14 (Guest persona sidebar
+// shift) and ../IA_Plan/wiki/concepts/personas.md §5 (revised position).
+const atlasAssetProject: Project = {
   id: 'proj-atlas-brand',
   workspaceId: studioAtlas.id,
   name: 'Brand systems',
   tier: 'restricted',
   ownerUserId: 'user-atlas-admin',
   isDrafts: false,
-  currentUserHasAccess: false
+  currentUserHasAccess: true
 }
+
+// Coca-Cola project (Comfy Org) — Tomás has Runner on a single workflow
+// inside, so the project shell becomes visible. Cloned from admin
+// fixture with access flipped on.
+const cocacolaForTomas: Project = (() => {
+  const base = adminFixture.projects.find((p) => p.id === 'proj-cocacola')
+  if (!base) {
+    return {
+      id: 'proj-cocacola',
+      workspaceId: comfyOrgForTomas.id,
+      name: 'Coca-Cola',
+      tier: 'restricted',
+      ownerUserId: 'user-jane',
+      isDrafts: false,
+      currentUserHasAccess: true
+    }
+  }
+  return { ...base, currentUserHasAccess: true }
+})()
 
 // Coke can hero (Runner) + Brand color tuner app (App Runner).
 const accessibleWorkflows: Workflow[] = [
@@ -105,7 +128,7 @@ const accessibleWorkflows: Workflow[] = [
     : []),
   {
     id: 'app-atlas-brandtuner',
-    projectId: atlasHiddenProject.id,
+    projectId: atlasAssetProject.id,
     name: 'Brand color tuner',
     kind: 'app',
     ownerUserId: 'user-atlas-admin',
@@ -119,11 +142,58 @@ export const assetOnlyGuestFixture: PersonaFixture = {
   currentUser: tomasUser,
   workspaces: [comfyOrgForTomas, studioAtlas],
   currentWorkspaceId: comfyOrgForTomas.id,
-  // No project visibility — only the auto-created Drafts in each host.
-  projects: [tomasDraftsComfy, tomasDraftsAtlas, atlasHiddenProject],
+  // Project shells the user can navigate to: drafts in each host +
+  // the Coca-Cola project (host-1) + Brand systems (host-2). Each
+  // project's interior is filtered to only Tomás's accessible asset.
+  projects: [
+    tomasDraftsComfy,
+    tomasDraftsAtlas,
+    cocacolaForTomas,
+    atlasAssetProject
+  ],
   workflows: [...accessibleWorkflows],
   // Studio Atlas members are surfaced for completeness; the Members tab
   // is hidden for this persona regardless.
   members: [...adminFixture.members, ...studioAtlasMembers],
-  usage: null
+  usage: null,
+  // Cross-workspace alerts. Tomás's two host workspaces both source
+  // notifications; the popover is the only place he sees activity in
+  // the workspace he isn't currently viewing.
+  notifications: [
+    {
+      id: 'note-tomas-1',
+      kind: 'asset-update',
+      actorUserId: 'user-atlas-admin',
+      target: {
+        workspaceId: studioAtlas.id,
+        projectId: atlasAssetProject.id,
+        assetId: 'app-atlas-brandtuner'
+      },
+      createdAt: '2026-05-13'
+    },
+    {
+      id: 'note-tomas-2',
+      kind: 'asset-grant',
+      actorUserId: 'user-jane',
+      target: {
+        workspaceId: comfyOrgForTomas.id,
+        projectId: 'proj-cocacola',
+        assetId: 'wf-cocacola-hero'
+      },
+      createdAt: '2026-05-11',
+      readAt: '2026-05-12'
+    },
+    {
+      id: 'note-tomas-3',
+      kind: 'asset-grant',
+      actorUserId: 'user-atlas-admin',
+      target: {
+        workspaceId: studioAtlas.id,
+        projectId: atlasAssetProject.id,
+        assetId: 'app-atlas-brandtuner'
+      },
+      createdAt: '2026-04-30',
+      readAt: '2026-05-01'
+    }
+  ]
 }

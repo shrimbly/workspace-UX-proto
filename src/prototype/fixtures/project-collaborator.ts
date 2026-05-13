@@ -63,5 +63,37 @@ export const projectCollaboratorFixture: PersonaFixture = {
   projects: projectsForMira,
   workflows: workflowsForMira,
   // No personal billing / usage surfacing for a workspace Guest.
-  usage: null
+  usage: null,
+  // Cross-workspace alerts. Mira's host workspace surfaces in-place via
+  // the project list; the notifications popover is where she finds out
+  // about activity she isn't currently looking at — including invites
+  // into workspaces she hasn't been added to yet.
+  notifications: [
+    {
+      id: 'note-mira-1',
+      kind: 'workspace-invite',
+      actorUserId: 'user-jane',
+      target: { workspaceId: 'ws-acme-co' },
+      createdAt: '2026-05-13'
+    },
+    {
+      id: 'note-mira-2',
+      kind: 'asset-update',
+      actorUserId: 'user-pablo',
+      target: {
+        workspaceId: 'ws-comfy-org',
+        projectId: 'proj-client-x',
+        assetId: 'wf-clientx-moodboard'
+      },
+      createdAt: '2026-05-13'
+    },
+    {
+      id: 'note-mira-3',
+      kind: 'project-grant',
+      actorUserId: 'user-jane',
+      target: { workspaceId: 'ws-comfy-org', projectId: 'proj-client-x' },
+      createdAt: '2026-05-09',
+      readAt: '2026-05-10'
+    }
+  ]
 }

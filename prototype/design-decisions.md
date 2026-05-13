@@ -221,3 +221,57 @@ Recommended wiki updates (for IA_Plan, not made from this repo):
 3. Optionally revisit `workspace-label-in-local-only` to clarify it now only covers the **populated** workspace slot for the local persona (which still isn't displayed).
 
 Promote? maybe — promote once PM confirms (a) the CTA belongs in this slot vs. a different surface, (b) the subtitle copy ("Sync, collaborate, share") strikes the right tone for the cold local user, and (c) clicking the CTA should kick off sign-up + workspace creation as a single flow rather than two steps.
+
+## [2026-05-13] Node-graph project chip + workflow-level save destination (local disk vs cloud)
+
+Decision:
+
+- The top-left of the node graph carries a small **project chip**. Two states only:
+  - In a real project → chip shows the project's initial (and on click, opens a popover with the project name + promote-to-different-project option + the save-destination toggle).
+  - In My Workflows (i.e., "not in a project" from the user's mental model) → chip renders as a `+` Promote affordance (popover surfaces the same save-destination toggle plus "Promote to project…").
+- Workspace identity is **not** displayed on the canvas — it lives in the top-right user menu instead. The chip is project + save-destination only.
+- A workflow's **save destination** (where its save nodes write outputs) is a **workflow-level setting**, controlled from the chip's popover. Default: **local disk**. Alternative: **cloud** (resolves to the workflow's project, or My Workflows if it has no cloud identity yet).
+- Save nodes themselves carry **no** destination control — they read from the workflow's setting. One run, one destination.
+- For signed-out users on a local install, the cloud option renders **disabled** with a tooltip explaining that signing in unlocks it (the affordance stays visible for discoverability).
+- For signed-in local users flipping `Save = cloud` on a workflow with no cloud identity yet, the cloud workflow record is **auto-created lazily** under My Workflows on the flip (or on first cloud-save fire) — no confirmation modal. Matches the wiki's "no ceremony for My Workflows" stance.
+
+Reason: Two threads converged. (1) The new IA needs a canvas-level indicator that a workflow lives in a project (vs My Workflows). (2) Signed-in local users need a way to opt their workflow's outputs into cloud so they show up in their cloud library. A per-save-node toggle is incoherent (outputs of "one run" scattering across local and cloud), and a workspace-level default is too coarse (mixed local/cloud workflows in one workspace is a real case). Workflow-level via the chip is the right scope, and the chip is the right surface — it's already the project context, and the destination toggle is logically adjacent to project membership.
+
+The wiki previously read as if any local→cloud output upload was forbidden ([`cloud-local-bridge.md`](../IA_Plan/wiki/concepts/cloud-local-bridge.md) rule 3). Per Willie's clarification, that rule was scoped to **bridge-driven auto-uploads** (where dragging an output file between cloud-bridged folders could launder provenance) — **not** user-initiated save-node writes, which preserve provenance because the output stays attached to its generating workflow. The wiki has been amended accordingly.
+
+Wiki link: New formal decision: [`../IA_Plan/wiki/decisions/save-destination-workflow-level.md`](../IA_Plan/wiki/decisions/save-destination-workflow-level.md). Amended: [`../IA_Plan/wiki/concepts/cloud-local-bridge.md`](../IA_Plan/wiki/concepts/cloud-local-bridge.md) §rule 3 to distinguish bridge uploads from save-node writes. Updated: [`../IA_Plan/wiki/entities/workflow.md`](../IA_Plan/wiki/entities/workflow.md) §"Save destination" and [`../IA_Plan/wiki/entities/output.md`](../IA_Plan/wiki/entities/output.md) §"Where outputs are written".
+
+Open question dependency:
+
+- **`save-cloud-cost-surface`** (new) — Cloud saves cost storage credits. Does the chip popover need a billing hint on first cloud flip? Working answer: one-time tooltip; don't repeat on every save. Not yet logged in wiki open-questions.
+- **`save-destination-offline-behavior`** (new) — Signed-in user is currently offline with chip set to cloud — queue, fail, or fall back to local? Not MVP; working answer: fail clearly at run time. Not yet logged.
+- **`mixed-destination-per-save-node`** — Considered and rejected for MVP (some outputs local, some cloud, e.g. previews local + finals cloud). Revisit if a user need emerges.
+
+Promote? **yes — already promoted.** The wiki decision page is filed. This log entry captures the trail and the open-question follow-ups. Pending PM confirmation: scope of the cloud-cost tooltip; offline behavior; whether the lazy auto-create on cloud-flip should be on chip-flip or first-run-fire (implementation detail, doesn't change the user-facing model).
+
+## [2026-05-14] Guest personas — replace "Shared with me" tray with filtered normal nav + cross-workspace notifications
+
+Decision:
+
+- **Project Collaborator (Mira)** and **Asset-only Guest (Tomás)** no longer see a dedicated **Shared with me** sidebar item. Instead, they use the normal sidebar — Recents, Projects, etc. — filtered to whatever they have access to. The sidebar is already workspace-scoped; switching workspaces switches the view.
+  - Project Collaborator: Projects shows only the projects she's a Collaborator on (Mira sees just Client X). Library and Members remain hidden. Inside the project she has full Collaborator capability.
+  - Asset-only Guest: Projects shows the project shells that contain his accessible assets (Tomás sees Coca-Cola in Comfy Org and Brand systems in Studio Atlas). Inside the project, the workflow grid is filtered to just his accessible asset; the Share button, Media assets button, and `+ Workflow` button are hidden via an `isAssetOnlyGuest` guard. The project page becomes a transit shell.
+- **Cross-workspace alerts** move to a new top-bar **Notifications** affordance (`TopBarNotifications.vue`): a bell button between the feedback button and the user chip, with a primary-color badge for unread count and a popover listing recent items. Clicking a row marks it read, switches workspace if the target is elsewhere, and routes to the project. "Mark all read" clears unread.
+- **Notification kinds supported v1**: `asset-grant`, `asset-update`, `project-grant`, `workspace-invite`. Future kinds (@mentions, run-complete, Hub-submission state, push) deferred.
+- **Data shape**: `PersonaFixture.notifications: Notification[]` with `{ id, kind, actorUserId, target: { workspaceId, projectId?, assetId? }, createdAt, readAt? }`. Seeded for both guest personas; empty for everyone else.
+- **Store**: removed the previous `sharedProjects` / `sharedAssets` computeds and the `shared-with-me` / `shared-asset` ActiveView kinds; added `sortedNotifications`, `unreadNotificationCount`, `markNotificationRead`, `markAllNotificationsRead` to `personaStore`.
+- **Files removed**: `views/SharedWithMeView.vue`, `views/SharedAssetView.vue`. The i18n blocks `prototype.views.sharedWithMe.*` and `prototype.views.sharedAsset.*` were dropped in favour of `prototype.views.notifications.*` and `prototype.tabs.notifications`.
+
+Reason: The wiki's §4 already specifies that Project Collaborators see a narrow workspace view (only their projects). Our "Shared with me" tray was a prototype-only invention that diverged from that shape and forced two different navigation mental models for guests vs members. Sharing the navigation makes the role hierarchy feel additive (more access → more visible) instead of substitutive (different surface entirely). The sidebar is workspace-scoped, so Asset-only Guests who are present in multiple workspaces use the workspace switcher exactly like Members do — what they _can't_ see passively is activity in another workspace, which is what the Notifications bell solves: a global, cross-workspace cue surfaced at the top bar regardless of which workspace they're currently in.
+
+Wiki link: `../IA_Plan/wiki/concepts/personas.md` §4, §5; `../IA_Plan/wiki/concepts/three-level-permissions.md`.
+
+Recommended wiki updates (for IA_Plan, not made from this repo):
+
+1. **`wiki/concepts/personas.md` §4 (Project Collaborator)** — "What they see" already implies filtered normal nav; add an explicit clarifier that the surface is the same as a Member's, just filtered. Remove any cross-reference to a dedicated "Shared with me" surface if one exists.
+2. **`wiki/concepts/personas.md` §5 (Asset-only Guest)** — current text says "no project, no other assets … no workspace browsing." Revise to: the project _shell_ is visible (sidebar entry + detail page), but the project interior is filtered to just their accessible assets and all share/edit/create affordances are hidden. Workspace browsing happens via the standard switcher between the workspaces they're a guest in.
+3. **New concept page** `wiki/concepts/notifications.md` — describe the bell affordance, its global (cross-workspace) scope, the v1 trigger types (`asset-grant`, `asset-update`, `project-grant`, `workspace-invite`), the routing-on-click contract (switch workspace if needed → navigate to project), and the read/unread model.
+4. **`wiki/open-questions.md`** — add `notification-deep-link-targets` (should clicks route to project, asset detail when we have one, or the host-workspace inbox?) and `notification-cross-workspace-routing-contract` (do we always auto-switch, or prompt for workspace switch first?). Working answer in this prototype: auto-switch, route to project.
+5. **`wiki/open-questions.md#zero-state-for-asset-only-guest`** — the prior "multi-workspace asset tray" framing is superseded; either close the question or rephrase it around the project-shell zero state (what does Tomás see when he opens a project where his only accessible asset has been revoked?).
+
+Promote? maybe — once PM confirms (a) the project-shell-with-filtered-interior position for Asset-only Guest, (b) auto-switch routing on notification click, and (c) the v1 notification kind set. If confirmed, promote the persona revisions to formal wiki edits and add a `wiki/decisions/notifications-cross-workspace-alerts.md` page.

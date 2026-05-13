@@ -666,5 +666,6 @@ export const adminFixture: PersonaFixture = {
       submittedByUserId: 'user-marcus',
       submittedAt: '2026-05-12'
     }
-  ]
+  ],
+  notifications: []
 }
