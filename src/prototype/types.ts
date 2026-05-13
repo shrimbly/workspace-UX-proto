@@ -23,8 +23,6 @@ export type WorkspaceRole = 'admin' | 'member' | 'guest'
 // `restricted`; `private` is reserved for the auto-created Drafts flavor.
 export type ProjectTier = 'workspace-wide' | 'restricted' | 'private'
 
-export type AssetKind = 'workflow' | 'app' | 'model' | 'media' | 'blueprint'
-
 // Asset-level roles per ../IA_Plan/wiki/concepts/three-level-permissions.md.
 // Post-MVP roles (Editor, Viewer) intentionally omitted.
 export type AssetRole = 'owner' | 'runner' | 'app-runner'

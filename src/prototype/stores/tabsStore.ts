@@ -6,9 +6,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export type TabKind = 'workflow' | 'app' | 'builder'
+type TabKind = 'workflow' | 'app' | 'builder'
 
-export interface OpenTab {
+interface OpenTab {
   id: string
   label: string
   kind?: TabKind

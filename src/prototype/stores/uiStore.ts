@@ -8,7 +8,7 @@ import { ref, watch } from 'vue'
 import { usePrototypePersonaStore } from './personaStore'
 import type { LibrarySection } from '../types'
 
-export type ActiveView =
+type ActiveView =
   | { kind: 'drafts' }
   | { kind: 'projects' }
   | { kind: 'project'; projectId: string }
