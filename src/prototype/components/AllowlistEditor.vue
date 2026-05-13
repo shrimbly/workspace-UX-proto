@@ -10,7 +10,7 @@
 -->
 <template>
   <section
-    class="flex flex-col gap-3 rounded-xl border border-border-subtle bg-base-background p-5"
+    class="flex flex-col gap-3 rounded-xl border border-border-subtle bg-modal-card-background p-5"
   >
     <header class="flex flex-col gap-0.5">
       <h2 class="text-base font-semibold text-base-foreground">

@@ -13,7 +13,7 @@
 -->
 <template>
   <section
-    class="flex flex-col gap-4 rounded-xl border border-border-subtle bg-base-background p-5"
+    class="flex flex-col gap-4 rounded-xl border border-border-subtle bg-modal-card-background p-5"
   >
     <header class="flex flex-col gap-0.5">
       <h2 class="text-base font-semibold text-base-foreground">
@@ -26,7 +26,7 @@
 
     <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
       <article
-        class="flex flex-col gap-2 rounded-lg border border-border-subtle p-4"
+        class="flex flex-col gap-2 rounded-lg border border-border-subtle bg-base-background p-4"
       >
         <span class="text-xs font-medium text-muted-foreground">
           {{ t('prototype.views.settings.billing.planLabel') }}
@@ -71,7 +71,7 @@
       </article>
 
       <article
-        class="flex flex-col gap-2 rounded-lg border border-border-subtle p-4"
+        class="flex flex-col gap-2 rounded-lg border border-border-subtle bg-base-background p-4"
       >
         <span class="text-xs font-medium text-muted-foreground">
           {{ t('prototype.views.settings.billing.paymentLabel') }}
@@ -124,7 +124,7 @@
       </article>
 
       <article
-        class="flex flex-col gap-2 rounded-lg border border-border-subtle p-4"
+        class="flex flex-col gap-2 rounded-lg border border-border-subtle bg-base-background p-4"
       >
         <span class="text-xs font-medium text-muted-foreground">
           {{ t('prototype.views.settings.billing.creditLabel') }}

@@ -316,6 +316,13 @@
         "title": "Workspace settings",
         "subtitle": "Identity, allowlists, and other workspace-wide configuration.",
         "guestEmpty": "Workspace settings are not available to guests.",
+        "tabs": {
+          "general": "General",
+          "allowlists": "Allowlists",
+          "publishing": "Publishing",
+          "billing": "Billing",
+          "advanced": "Advanced"
+        },
         "general": {
           "heading": "General",
           "description": "Workspace identity. Visible to all members.",
