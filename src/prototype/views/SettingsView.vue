@@ -298,7 +298,11 @@
       </template>
 
       <template v-if="activeTab === 'billing' && fixture.billing">
-        <BillingSection :billing="fixture.billing" />
+        <BillingSection
+          :billing="fixture.billing"
+          :tier="workspace?.tier ?? 'team'"
+          :billable-member-count="billableMemberCount"
+        />
 
         <MemberCreditLimitsSection
           v-if="workspace?.tier === 'team'"
@@ -443,6 +447,9 @@ const otherAdmins = computed(() =>
   fixture.value.members.filter(
     (m) => m.role === 'admin' && m.id !== fixture.value.currentUser.id
   )
+)
+const billableMemberCount = computed(
+  () => fixture.value.members.filter((m) => m.role !== 'guest').length
 )
 const canTransferOwnership = computed(
   () => isAdmin.value && workspace.value?.tier === 'team'

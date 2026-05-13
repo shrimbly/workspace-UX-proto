@@ -7,232 +7,246 @@
              §"Workspace level" — Manage billing & subscription, view
              credit balance. Admin-only, not delegable.
 
-  Read-with-stub-actions for the prototype: plan + payment + credit
-  balance + invoice list are display-only. "Manage" buttons are
-  affordance stubs; the real flows are out of scope here.
+  Visual design mirrors the production subscription card at
+  src/platform/workspace/components/SubscriptionPanelContentWorkspace.vue:
+  rounded-2xl outer card, plan + price + renewal date as the header,
+  a credits sub-card on a secondary background, and a benefits list.
+  Buttons are affordance stubs in the prototype.
 -->
 <template>
-  <section
-    class="flex flex-col gap-4 rounded-xl border border-border-subtle bg-modal-card-background p-5"
-  >
-    <header class="flex flex-col gap-0.5">
-      <h2 class="text-base font-semibold text-base-foreground">
-        {{ t('prototype.views.settings.billing.heading') }}
-      </h2>
-      <p class="text-xs text-muted-foreground">
-        {{ t('prototype.views.settings.billing.description') }}
-      </p>
-    </header>
-
-    <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
-      <article
-        class="flex flex-col gap-2 rounded-lg border border-border-subtle bg-base-background p-4"
+  <div class="flex flex-col gap-6">
+    <section class="rounded-2xl border border-interface-stroke p-6">
+      <div
+        class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-2"
       >
-        <span class="text-xs font-medium text-muted-foreground">
-          {{ t('prototype.views.settings.billing.planLabel') }}
-        </span>
-        <div class="flex items-center gap-2">
-          <span class="text-lg font-semibold capitalize">
-            {{ billing.subscription.plan }}
-          </span>
-          <span
-            :class="
-              cn(
-                'inline-flex h-5 items-center rounded-full px-2 text-[10px] tracking-wide uppercase',
-                statusBadgeClass
-              )
-            "
-          >
-            {{
-              t(
-                `prototype.views.settings.billing.status.${billing.subscription.status}`
-              )
-            }}
-          </span>
-        </div>
-        <span class="text-xs text-muted-foreground">
-          {{
-            billing.subscription.cancelsAt
-              ? t('prototype.views.settings.billing.cancelsOn', {
-                  date: billing.subscription.cancelsAt
-                })
-              : t('prototype.views.settings.billing.renewsOn', {
-                  date: billing.subscription.renewsAt
-                })
-          }}
-        </span>
-        <button
-          type="button"
-          class="mt-1 inline-flex h-8 cursor-pointer appearance-none items-center justify-center rounded-lg border border-border-subtle bg-transparent px-3 text-xs transition-colors hover:bg-secondary-background"
-          @click="onManageStub('plan')"
-        >
-          {{ t('prototype.views.settings.billing.managePlan') }}
-        </button>
-      </article>
-
-      <article
-        class="flex flex-col gap-2 rounded-lg border border-border-subtle bg-base-background p-4"
-      >
-        <span class="text-xs font-medium text-muted-foreground">
-          {{ t('prototype.views.settings.billing.paymentLabel') }}
-        </span>
-        <div class="flex items-baseline gap-1">
-          <template
-            v-if="
-              billing.paymentMethod.kind === 'card' &&
-              billing.paymentMethod.last4
-            "
-          >
-            <span class="text-lg font-semibold">
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-text-primary">
+              {{ tierName }}
+            </span>
+            <span
+              v-if="billing.subscription.status === 'past-due'"
+              class="inline-flex h-5 items-center rounded-full bg-warning-background/15 px-2 text-[10px] font-medium tracking-wide text-warning-background uppercase"
+            >
+              {{ t('prototype.views.settings.billing.status.past-due') }}
+            </span>
+          </div>
+          <div class="flex items-baseline gap-1 font-semibold">
+            <span class="text-2xl">${{ tierPrice }}</span>
+            <span class="text-base text-text-secondary">
               {{
-                billing.paymentMethod.brand ??
-                t('prototype.views.settings.billing.card')
+                tier === 'personal'
+                  ? t('subscription.usdPerMonth')
+                  : t('subscription.usdPerMonthPerMember')
               }}
             </span>
-            <span class="text-sm text-muted-foreground">
-              ···· {{ billing.paymentMethod.last4 }}
-            </span>
-          </template>
-          <span v-else class="text-sm text-muted-foreground">
-            {{ t('prototype.views.settings.billing.noPayment') }}
-          </span>
+          </div>
+          <div class="text-sm text-text-secondary">
+            {{
+              billing.subscription.cancelsAt
+                ? t('subscription.expiresDate', {
+                    date: formattedDate(billing.subscription.cancelsAt)
+                  })
+                : t('subscription.renewsDate', {
+                    date: formattedDate(billing.subscription.renewsAt)
+                  })
+            }}
+          </div>
         </div>
-        <span
-          v-if="
-            billing.paymentMethod.expiresMonth &&
-            billing.paymentMethod.expiresYear
-          "
-          class="text-xs text-muted-foreground"
+
+        <div class="flex flex-wrap gap-2 md:ml-auto">
+          <button
+            v-if="!isFreeTier"
+            type="button"
+            class="inline-flex h-10 cursor-pointer appearance-none items-center rounded-lg border-0 bg-interface-menu-component-surface-selected px-4 text-sm text-text-primary transition-opacity hover:opacity-90"
+            @click="onManageStub('payment')"
+          >
+            {{ t('subscription.managePayment') }}
+          </button>
+          <button
+            type="button"
+            class="inline-flex h-10 cursor-pointer items-center rounded-lg bg-base-foreground px-4 text-sm font-medium text-base-background transition-opacity hover:opacity-90"
+            @click="onManageStub('plan')"
+          >
+            {{ t('subscription.upgradePlan') }}
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-6 pt-6 lg:flex-row lg:items-stretch">
+        <div
+          class="relative flex flex-1 flex-col justify-between gap-6 rounded-2xl bg-secondary-background p-5 lg:max-w-sm"
         >
-          {{
-            t('prototype.views.settings.billing.expires', {
-              month: String(billing.paymentMethod.expiresMonth).padStart(
-                2,
-                '0'
-              ),
-              year: billing.paymentMethod.expiresYear
-            })
-          }}
-        </span>
+          <div class="flex flex-col gap-2">
+            <div class="text-sm text-muted">
+              {{ t('subscription.totalCredits') }}
+            </div>
+            <div class="text-2xl font-bold text-text-primary">
+              {{ billing.creditBalance.remaining.toLocaleString() }}
+            </div>
+          </div>
+
+          <table class="text-sm text-muted">
+            <tbody>
+              <tr>
+                <td class="pr-4 text-left align-middle font-bold">
+                  {{ billing.creditBalance.monthlyAllowance.toLocaleString() }}
+                  /
+                  {{ billing.creditBalance.monthlyAllowance.toLocaleString() }}
+                </td>
+                <td class="align-middle">
+                  {{
+                    t('subscription.creditsRemainingThisMonth', {
+                      date: shortDate(billing.creditBalance.resetsAt)
+                    })
+                  }}
+                </td>
+              </tr>
+              <tr>
+                <td class="pr-4 text-left align-middle font-bold">0</td>
+                <td class="align-middle">
+                  {{ t('subscription.creditsYouveAdded') }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <button
+            v-if="!isFreeTier"
+            type="button"
+            class="inline-flex min-h-8 cursor-pointer appearance-none items-center justify-center rounded-lg border-0 bg-interface-menu-component-surface-selected p-2 text-sm text-text-primary transition-opacity hover:opacity-90"
+            @click="onManageStub('credits')"
+          >
+            {{ t('subscription.addCredits') }}
+          </button>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="text-sm text-text-primary">
+            {{ t('subscription.yourPlanIncludes') }}
+          </div>
+          <div class="flex flex-col gap-0">
+            <div
+              v-for="benefit in benefits"
+              :key="benefit.key"
+              class="flex items-center gap-2 py-2"
+            >
+              <i class="icon-[lucide--check] size-3 text-text-primary" />
+              <span class="text-sm text-muted">{{ benefit.label }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      v-if="tier === 'team'"
+      class="flex items-center justify-between gap-1 rounded-2xl border border-interface-stroke p-6 text-sm"
+    >
+      <div class="flex flex-col gap-2">
+        <h4 class="m-0 text-sm text-text-primary">
+          {{ t('subscription.nextMonthInvoice') }}
+        </h4>
         <button
           type="button"
-          class="mt-1 inline-flex h-8 cursor-pointer appearance-none items-center justify-center rounded-lg border border-border-subtle bg-transparent px-3 text-xs transition-colors hover:bg-secondary-background"
-          @click="onManageStub('payment')"
+          class="cursor-pointer appearance-none border-0 bg-transparent p-0 text-left text-muted-foreground underline"
+          @click="onManageStub('invoices')"
         >
-          {{ t('prototype.views.settings.billing.updatePayment') }}
+          {{ t('subscription.invoiceHistory') }}
         </button>
-      </article>
-
-      <article
-        class="flex flex-col gap-2 rounded-lg border border-border-subtle bg-base-background p-4"
-      >
-        <span class="text-xs font-medium text-muted-foreground">
-          {{ t('prototype.views.settings.billing.creditLabel') }}
-        </span>
-        <div class="flex items-baseline gap-1">
-          <span class="text-lg font-semibold">
-            {{ billing.creditBalance.remaining.toLocaleString() }}
-          </span>
-          <span class="text-xs text-muted-foreground">
-            / {{ billing.creditBalance.monthlyAllowance.toLocaleString() }}
-          </span>
-        </div>
-        <div
-          class="h-1.5 w-full overflow-hidden rounded-full bg-secondary-background"
-        >
-          <div
-            class="h-full bg-base-foreground"
-            :style="{ width: `${creditPct}%` }"
-          />
-        </div>
-        <span class="text-xs text-muted-foreground">
-          {{
-            t('prototype.views.settings.billing.resetsOn', {
-              date: billing.creditBalance.resetsAt
-            })
-          }}
-        </span>
-      </article>
-    </div>
-
-    <div class="flex flex-col gap-2">
-      <h3 class="text-sm font-medium text-base-foreground">
-        {{ t('prototype.views.settings.billing.invoicesHeading') }}
-      </h3>
-      <div
-        v-if="!billing.invoices.length"
-        class="rounded-lg border border-dashed border-border-subtle px-4 py-6 text-center text-xs text-muted-foreground"
-      >
-        {{ t('prototype.views.settings.billing.noInvoices') }}
       </div>
-      <ul v-else class="m-0 flex list-none flex-col p-0">
-        <li
-          v-for="invoice in billing.invoices"
-          :key="invoice.id"
-          class="flex items-center justify-between border-b border-border-subtle py-2 last:border-b-0"
-        >
-          <span class="text-sm">{{ invoice.issuedAt }}</span>
-          <span
-            :class="
-              cn(
-                'inline-flex h-5 items-center rounded-full px-2 text-[10px] tracking-wide uppercase',
-                invoiceStatusClass(invoice.status)
-              )
-            "
-          >
-            {{
-              t(
-                `prototype.views.settings.billing.invoiceStatus.${invoice.status}`
-              )
-            }}
-          </span>
-          <span class="text-sm font-medium">
-            ${{ invoice.amountUsd.toLocaleString() }}
-          </span>
-        </li>
-      </ul>
-    </div>
+      <div class="flex flex-col items-end gap-2">
+        <h4 class="m-0 font-bold">${{ nextMonthInvoice }}</h4>
+        <h5 class="m-0 text-muted-foreground">
+          {{ t('subscription.memberCount', billableMemberCount) }}
+        </h5>
+      </div>
+    </section>
 
-    <p class="text-xs text-muted-foreground italic">
+    <p class="text-xs text-text-secondary italic">
       {{ t('prototype.views.settings.billing.ownershipNote') }}
     </p>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { cn } from '@comfyorg/tailwind-utils'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import type { InvoiceStatus, WorkspaceBilling } from '../types'
+import type { WorkspaceBilling, WorkspacePlan, WorkspaceTier } from '../types'
 
-const { billing } = defineProps<{ billing: WorkspaceBilling }>()
+const { billing, tier, billableMemberCount } = defineProps<{
+  billing: WorkspaceBilling
+  tier: WorkspaceTier
+  billableMemberCount: number
+}>()
 
 const { t } = useI18n()
 
-const creditPct = computed(() => {
-  const { remaining, monthlyAllowance } = billing.creditBalance
-  if (monthlyAllowance <= 0) return 0
-  return Math.max(0, Math.min(100, (remaining / monthlyAllowance) * 100))
-})
-
-const statusBadgeClass = computed(() => {
-  if (billing.subscription.status === 'past-due') {
-    return 'bg-accent-warning/15 text-accent-warning'
-  }
-  if (billing.subscription.status === 'cancelled') {
-    return 'bg-secondary-background text-muted-foreground'
-  }
-  return 'bg-secondary-background text-base-foreground'
-})
-
-function invoiceStatusClass(status: InvoiceStatus): string {
-  if (status === 'paid') return 'bg-secondary-background text-muted-foreground'
-  if (status === 'open') return 'bg-accent-warning/15 text-accent-warning'
-  return 'text-danger-foreground bg-secondary-background'
+const tierPriceByPlan: Record<WorkspacePlan, number> = {
+  free: 0,
+  professional: 20,
+  enterprise: 50
 }
 
-function onManageStub(_kind: 'plan' | 'payment') {
+const tierNameByPlan: Record<WorkspacePlan, string> = {
+  free: 'Free',
+  professional: 'Professional',
+  enterprise: 'Enterprise'
+}
+
+const tierPrice = computed(() => tierPriceByPlan[billing.subscription.plan])
+const tierName = computed(() => tierNameByPlan[billing.subscription.plan])
+const isFreeTier = computed(() => billing.subscription.plan === 'free')
+
+const nextMonthInvoice = computed(() => tierPrice.value * billableMemberCount)
+
+const benefits = computed(() => {
+  if (billing.subscription.plan === 'free') {
+    return [
+      { key: 'members', label: t('subscription.membersLabel', { count: 1 }) },
+      { key: 'credits', label: '100 credits / month' },
+      { key: 'support', label: 'Community support' }
+    ]
+  }
+  if (billing.subscription.plan === 'enterprise') {
+    return [
+      { key: 'members', label: 'Unlimited members' },
+      { key: 'credits', label: 'Custom credit allowance' },
+      { key: 'sso', label: 'SSO & SCIM' },
+      { key: 'support', label: 'Dedicated account manager' }
+    ]
+  }
+  return [
+    {
+      key: 'members',
+      label: t('subscription.membersLabel', {
+        count: billing.subscription.seatsIncluded
+      })
+    },
+    { key: 'credits', label: '10,000 credits / month per member' },
+    { key: 'partner', label: t('subscription.partnerNodesDescription') },
+    { key: 'support', label: 'Priority support' }
+  ]
+})
+
+function formattedDate(value: string): string {
+  return new Date(value).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  })
+}
+
+function shortDate(value: string): string {
+  const date = new Date(value)
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = String(date.getFullYear()).slice(-2)
+  return `${month}/${day}/${year}`
+}
+
+function onManageStub(_kind: 'plan' | 'payment' | 'credits' | 'invoices') {
   // Prototype stub — real flow would open a modal / Stripe portal.
 }
 </script>
