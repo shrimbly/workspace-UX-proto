@@ -90,9 +90,11 @@
                 </td>
                 <td class="align-middle">
                   {{
-                    t('subscription.creditsRemainingThisMonth', {
-                      date: shortDate(billing.creditBalance.resetsAt)
-                    })
+                    t(
+                      'subscription.creditsRemainingThisMonth',
+                      { date: shortDate(billing.creditBalance.resetsAt) },
+                      { escapeParameter: false }
+                    )
                   }}
                 </td>
               </tr>
