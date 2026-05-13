@@ -5,23 +5,14 @@
              (delegable to Members via edit-allowlists grant).
 
   Reusable editor for a single allowlist (model, custom-node, partner-node).
-  Has an enable/disable toggle: when disabled, the gate is off — anything
-  is allowed regardless of entries. Admins can still curate the entries
-  list while disabled.
+  Enforce is a toggle switch in the header; when off, an inline hint
+  appears below the header and the entries list dims to indicate the
+  list is not currently gating anything. Admins can still curate
+  entries while enforcement is off.
 -->
 <template>
   <SettingsPanel :title="title" :description="description">
     <template #actions>
-      <span
-        class="inline-flex h-5 items-center rounded-full bg-secondary-background px-2 text-[10px] font-medium tracking-wide uppercase"
-        :class="enabled ? 'text-text-primary' : 'text-muted'"
-      >
-        {{
-          enabled
-            ? t('prototype.views.settings.allowlist.statusEnforced')
-            : t('prototype.views.settings.allowlist.statusOff')
-        }}
-      </span>
       <label
         :class="
           cn(
@@ -30,16 +21,15 @@
           )
         "
       >
-        <input
-          :checked="enabled"
+        <span>{{ t('prototype.views.settings.allowlist.enforceLabel') }}</span>
+        <ToggleSwitch
+          :model-value="enabled"
           :disabled="!canEdit"
-          type="checkbox"
-          class="size-4 cursor-pointer appearance-auto accent-base-foreground disabled:cursor-not-allowed"
-          @change="
-            emit('toggle-enabled', ($event.target as HTMLInputElement).checked)
+          class="transition-transform active:scale-90"
+          @update:model-value="
+            (value: boolean) => emit('toggle-enabled', value)
           "
         />
-        <span>{{ t('prototype.views.settings.allowlist.enforceLabel') }}</span>
       </label>
     </template>
 
@@ -49,7 +39,10 @@
       </p>
     </SettingsSubCard>
 
-    <SettingsSubCard v-if="entries.length">
+    <SettingsSubCard
+      v-if="entries.length"
+      :class="cn('transition-opacity', !enabled && 'opacity-60')"
+    >
       <ul class="m-0 flex list-none flex-col p-0">
         <li
           v-for="(entry, index) in entries"
@@ -115,6 +108,7 @@
 
 <script setup lang="ts">
 import { cn } from '@comfyorg/tailwind-utils'
+import ToggleSwitch from 'primevue/toggleswitch'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
