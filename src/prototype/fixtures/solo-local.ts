@@ -14,9 +14,11 @@ const user = {
   email: ''
 }
 
-// Implicit personal-workspace-equivalent. Local-only UI hides the
-// workspace switcher entirely; this entry exists only so shared types
-// stay populated (the IA wiki's "implicit workspace" framing).
+// Implicit personal-workspace-equivalent. Local-only UI replaces the
+// workspace switcher with a Create-a-workspace CTA in the same slot
+// (see prototype/design-decisions.md 2026-05-14); this entry exists
+// only so shared types stay populated (the IA wiki's "implicit
+// workspace" framing).
 const implicitWorkspace = {
   id: 'ws-local',
   name: 'Local',

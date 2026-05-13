@@ -196,3 +196,28 @@ Open question dependency: None new. Adjacent gaps surfaced by building this:
 - **Self-transfer guard** — wiki says "between Admins" but is silent on whether the sole Admin must promote a Member before transferring. Prototype enforces this implicitly by requiring at least one other Admin in the dropdown.
 
 Promote? maybe — once PM confirms the Hub-queue resolution model and self-transfer rule, both could feed a small formal decision page.
+
+## [2026-05-14] Local-only — surface Create-a-workspace CTA in the workspace switcher slot
+
+Decision:
+
+- For Persona 1b (Solo creator — local-only), the slot at the top of the sidebar that normally holds the workspace switcher chip is now occupied by a dashed-outline **Create a workspace** CTA (`WorkspaceCreateChip.vue`). Previously, this slot was empty for local-only personas.
+- Visual treatment: dashed border around the whole chip; plus-icon avatar (dashed square placeholder) where the colored workspace avatar normally sits; "Create a workspace" as the primary line; one-line subtitle hinting at the cloud value ("Sync, collaborate, share").
+- The CTA is presentational in the prototype (no handler); in product it would route to sign-up / new-workspace creation.
+
+Reason: The wiki's current position (`concepts/personas.md` §1b) lists the workspace switcher under **NOT seen**, and `concepts/personas.md` further says "**Workspace concept invisible in the UI** — there's nothing to switch between and no one else to share with." That keeps the team/sharing/permissions concepts hidden — good — but it also leaves the local user without any discoverable entry point to the cloud upgrade path. Putting a single, intentionally-low-density CTA in that slot threads the needle: it doesn't introduce members, sharing, or projects, but it does make the "you could have a workspace" affordance visible and ambient instead of relying on a separate Settings or banner surface.
+
+Wiki link: `../IA_Plan/wiki/concepts/personas.md` §1b — Solo creator — local-only; `../IA_Plan/wiki/concepts/local-vs-cloud-integration.md`; `../IA_Plan/wiki/open-questions.md#workspace-label-in-local-only`.
+
+Open question dependency:
+
+- Lightly touches `workspace-label-in-local-only` — the open question asks what label the local user sees where "<Username>'s Workspace" would normally render. By replacing that slot with a CTA we sidestep the labeling question for the populated state but introduce a new shape (an _unpopulated_ workspace slot) that the question didn't anticipate. Worth recording so the next pass on that open question accounts for both modes.
+- New question to log in the wiki: **`local-only-upgrade-affordance`** — Should the local-only sidebar surface an explicit upgrade/sign-in entry point in the workspace switcher slot, or should the upgrade path live elsewhere (Settings, top-bar user menu, contextual nudges)? Working answer in this prototype: yes, in the switcher slot, as a passive dashed-outline CTA. Affects how prominent the sign-up path becomes in the local-first experience.
+
+Recommended wiki updates (for IA_Plan, not made from this repo):
+
+1. `wiki/concepts/personas.md` §1b "What they see" — move the workspace switcher off the **NOT seen** list and add a bullet under "What they see" describing the Create-a-workspace CTA in its slot. Cross-ref the new open question.
+2. `wiki/open-questions.md` — add `local-only-upgrade-affordance` with the working answer above.
+3. Optionally revisit `workspace-label-in-local-only` to clarify it now only covers the **populated** workspace slot for the local persona (which still isn't displayed).
+
+Promote? maybe — promote once PM confirms (a) the CTA belongs in this slot vs. a different surface, (b) the subtitle copy ("Sync, collaborate, share") strikes the right tone for the cold local user, and (c) clicking the CTA should kick off sign-up + workspace creation as a single flow rather than two steps.

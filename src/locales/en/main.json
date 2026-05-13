@@ -25,6 +25,10 @@
       "workspaces": "Workspaces",
       "searchWorkspaces": "Search workspaces",
       "createWorkspace": "Create a workspace",
+      "createWorkspaceChip": {
+        "title": "Create a workspace",
+        "subtitle": "Sync, collaborate, share"
+      },
       "accountSettings": "Account settings",
       "logOut": "Log out",
       "workspaceSubtitle": "{plan} · {memberCount} members",

@@ -11,8 +11,10 @@
     WORKSPACE — Members (team only)
   Footer: usage / upgrade chip (cloud only), Settings, Help.
 
-  Local mode (Persona 1b) — workspace switcher hidden, no projects,
-  Prompts dropped in favor of Outputs, no usage chip.
+  Local mode (Persona 1b) — workspace switcher slot holds a dashed
+  Create-a-workspace CTA (see prototype/design-decisions.md 2026-05-14)
+  instead of the populated chip. No projects, Prompts dropped in favor of
+  Outputs, no usage chip.
 -->
 <template>
   <aside
@@ -25,6 +27,7 @@
       :current-user="fixture.currentUser"
       @select-workspace="personaStore.setCurrentWorkspace"
     />
+    <WorkspaceCreateChip v-else-if="isLocalMode" />
 
     <label
       class="flex h-8 min-h-8 w-full cursor-text items-center gap-2 rounded-lg bg-secondary-background px-2 py-1.5 text-base-foreground"
@@ -124,6 +127,14 @@
         :usage="fixture.usage"
         :plan="currentWorkspace?.plan"
       />
+      <button
+        v-else-if="isLocalMode"
+        type="button"
+        class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-(image:--subscription-button-gradient) px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+      >
+        <span class="icon-[lucide--zap] size-4" />
+        {{ t('prototype.sidebar.upgradeCta') }}
+      </button>
       <SidebarItem
         v-if="!isGuestPersona"
         :label="t('prototype.sidebar.settings')"
@@ -148,6 +159,7 @@ import SidebarGroup from './sidebar/SidebarGroup.vue'
 import SidebarItem from './sidebar/SidebarItem.vue'
 import UsageChip from './sidebar/UsageChip.vue'
 import WorkspaceChip from './sidebar/WorkspaceChip.vue'
+import WorkspaceCreateChip from './sidebar/WorkspaceCreateChip.vue'
 import { usePrototypePersonaStore } from '../stores/personaStore'
 import { usePrototypeUiStore } from '../stores/uiStore'
 import type { LibrarySection } from '../types'
