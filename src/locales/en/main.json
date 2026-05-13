@@ -1,4 +1,429 @@
 {
+  "prototype": {
+    "sidebar": {
+      "drafts": "My Workflows",
+      "recents": "Recents",
+      "projects": "Projects",
+      "libraryMedia": "Media assets",
+      "libraryModels": "Models",
+      "libraryNodes": "Custom nodes",
+      "libraryPrompts": "Prompts",
+      "templates": "Templates",
+      "members": "Members",
+      "settings": "Settings",
+      "help": "Help",
+      "groupYourWork": "Your work",
+      "groupRecents": "Recents",
+      "groupLibrary": "Library",
+      "groupDiscover": "Discover",
+      "groupWorkspace": "Workspace",
+      "groupSharedWithYou": "Shared with you",
+      "searchPlaceholder": "Search",
+      "guestEmptyState": "Tailored guest view coming in a later pass.",
+      "guest": "Guest",
+      "sharedWithMe": "Shared with me",
+      "workspaces": "Workspaces",
+      "searchWorkspaces": "Search workspaces",
+      "createWorkspace": "Create a workspace",
+      "accountSettings": "Account settings",
+      "logOut": "Log out",
+      "workspaceSubtitle": "{plan} · {memberCount} members",
+      "workspaceSubtitleGuest": "Guest · {plan} · {memberCount} members",
+      "creditsLeft": "{pct}% credits",
+      "upgrade": "Upgrade →",
+      "upgradeCta": "Upgrade",
+      "plan": {
+        "free": "Free",
+        "professional": "Professional",
+        "enterprise": "Enterprise"
+      },
+      "role": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "member": "Member",
+        "guest": "Guest",
+        "personal": "Personal"
+      }
+    },
+    "topbar": {
+      "userFallback": "User?"
+    },
+    "tabs": {
+      "home": "Home",
+      "newTab": "New blank workflow",
+      "closeTab": "Close tab",
+      "feedback": "Send feedback"
+    },
+    "persona": {
+      "label": "Persona"
+    },
+    "dashboard": {
+      "newWorkflow": "+ Workflow",
+      "newProject": "+ Project",
+      "templatesHeading": "Templates"
+    },
+    "projectTier": {
+      "workspace-wide": "Workspace",
+      "restricted": "Restricted",
+      "private": "Private"
+    },
+    "components": {
+      "newWorkflowTile": {
+        "subtitle": "Saves to My Workflows"
+      }
+    },
+    "libraryPage": {
+      "back": "Back",
+      "projectHeading": "Project",
+      "tagsHeading": "Tags",
+      "foldersHeading": "Folders",
+      "allProjects": "All projects",
+      "allFolders": "All folders",
+      "tagsEmpty": "No tags on assets in this section yet."
+    },
+    "views": {
+      "drafts": {
+        "title": "My Workflows",
+        "subtitle": "Your private space for new work",
+        "recentHeading": "Recent",
+        "empty": "Nothing here yet. Tap \"New Workflow\" to start.",
+        "emptyHeading": "Save your first workflow",
+        "emptySubtitle": "My Workflows is the default home for new work. Spin one up or start from a template.",
+        "createWorkflow": "+ Workflow",
+        "templatesHeading": "Starter templates"
+      },
+      "recents": {
+        "title": "Recents",
+        "subtitle": "Workflows you've recently opened across every project",
+        "empty": "Nothing here yet. Open a workflow to see it land in Recents.",
+        "emptyHeading": "Start building your first workflow",
+        "emptySubtitle": "Spin up a blank graph or pick a starter template below.",
+        "createWorkflow": "+ Workflow",
+        "templatesHeading": "Starter templates"
+      },
+      "projects": {
+        "title": "Projects",
+        "newProject": "+ Project",
+        "noAccess": "No access",
+        "filterAll": "All",
+        "empty": "No projects in this view.",
+        "workflowCount": "{count} workflow | {count} workflows",
+        "sort": {
+          "lastModified": "Last modified",
+          "oldest": "Oldest",
+          "az": "A–Z",
+          "za": "Z–A"
+        },
+        "viewMode": {
+          "grid": "Grid view",
+          "list": "List view"
+        }
+      },
+      "project": {
+        "back": "All projects",
+        "notFound": "Project not found in current workspace.",
+        "workflowsHeading": "Workflows",
+        "workflowCount": "{count} workflows",
+        "membersHeading": "Members",
+        "memberCount": "{count} members",
+        "empty": "No workflows in this project yet.",
+        "newWorkflow": "+ Workflow",
+        "viewMediaAssets": "Media assets",
+        "sharing": {
+          "title": "Sharing",
+          "addPlaceholder": "Add people by name or email",
+          "addPickerHeading": "Add to project",
+          "addButton": "Add",
+          "addExternalHint": "Invite {email} as Guest in {workspace}",
+          "noMatches": "No matching workspace members. Press Enter to invite by email.",
+          "peopleHeading": "People with access",
+          "peopleCount": "{count} with access",
+          "generalAccessHeading": "General access",
+          "viaWorkspace": "via workspace",
+          "pending": "Pending",
+          "shareButton": "Share",
+          "close": "Close",
+          "summaryAnyone": "Anyone in {workspace}",
+          "summaryRestricted": "{count} person | {count} people",
+          "summaryMore": "+{count}",
+          "removeFromProject": "Remove from project",
+          "footerNote": "Workflows and apps in this project can also be shared or published individually.",
+          "tier": {
+            "restricted": {
+              "label": "Only invited people",
+              "description": "Only the people listed above can see this project."
+            },
+            "workspace-wide": {
+              "label": "Anyone in {workspace}",
+              "description": "Everyone in this workspace can view and edit assets here."
+            },
+            "private": {
+              "label": "Only you",
+              "description": "Drafts is your personal space — not shareable."
+            }
+          }
+        }
+      },
+      "library": {
+        "filterProject": "Project:",
+        "filterAllProjects": "All projects",
+        "empty": "No items match the current filters.",
+        "count": "{n} items",
+        "searchPlaceholder": "Search by name…",
+        "media": {
+          "title": "Media assets",
+          "subtitle": "Images, videos, and other media produced across your projects."
+        },
+        "models": {
+          "title": "Models",
+          "subtitle": "Model files available in this workspace."
+        },
+        "nodes": {
+          "title": "Custom nodes",
+          "subtitle": "Custom nodes available in this workspace."
+        },
+        "prompts": {
+          "title": "Prompts",
+          "subtitle": "Saved prompts that can be reused across workflows."
+        }
+      },
+      "hub": {
+        "title": "Comfy Hub",
+        "subtitle": "Discover and start from published workflows and templates."
+      },
+      "sharedWithMe": {
+        "title": "Shared with me",
+        "subtitle": "Projects and assets other people have given you access to.",
+        "empty": "Nothing has been shared with you yet.",
+        "projectsHeading": "Projects",
+        "assetsHeading": "Assets",
+        "filterAll": "All workspaces",
+        "inWorkspace": "in {workspace}",
+        "inProject": "in {project}",
+        "openProject": "Open project",
+        "openAsset": "Open"
+      },
+      "sharedAsset": {
+        "back": "Back to Shared with me",
+        "notFound": "This asset is no longer available to you.",
+        "sourceLabel": "Source",
+        "sourceWorkspaceLabel": "Workspace",
+        "sourceProjectLabel": "Project",
+        "sourceProjectHidden": "Hidden (no project-level access)",
+        "yourRoleLabel": "Your role",
+        "kindLabel": "Type",
+        "kind": {
+          "workflow": "Workflow",
+          "app": "App"
+        },
+        "runWorkflowMode": "Run in workflow mode",
+        "runAppMode": "Run in app mode",
+        "fork": "Fork",
+        "forkBlocked": "App Runner cannot fork — only the workflow Owner or Runners can.",
+        "workflowModeBlocked": "App Runner cannot view the graph — app mode only.",
+        "hostPaysHint": "Runs are charged to the host workspace ({workspace})."
+      },
+      "assetRole": {
+        "owner": "Owner",
+        "runner": "Runner",
+        "app-runner": "App Runner"
+      },
+      "projectRole": {
+        "owner": "Owner",
+        "collaborator": "Collaborator",
+        "project-guest": "Project Guest"
+      },
+      "members": {
+        "title": "Members",
+        "subtitle": "{count} members in this workspace",
+        "invite": "+ Invite",
+        "tabs": {
+          "members": "Members",
+          "pending": "Pending",
+          "permissions": "Permissions"
+        },
+        "table": {
+          "name": "Name",
+          "email": "Email",
+          "role": "Workspace role",
+          "joined": "Joined",
+          "actions": ""
+        },
+        "actions": {
+          "changeRoleTo": "Change to {role}",
+          "remove": "Remove from workspace",
+          "resend": "Resend",
+          "revoke": "Revoke",
+          "you": "You"
+        },
+        "pendingTab": {
+          "empty": "No pending invites.",
+          "headerEmail": "Email",
+          "headerRole": "Invited as",
+          "headerInvitedBy": "Invited by",
+          "headerInvitedAt": "Invited",
+          "headerActions": ""
+        },
+        "permissionsTab": {
+          "intro": "Set the baseline capabilities Members inherit. Admins always have these capabilities; Guests cannot.",
+          "readOnlyNote": "Only Admins can change these permissions.",
+          "headerCapability": "Capability",
+          "roleAdmin": "Admin",
+          "roleMember": "Member",
+          "roleGuest": "Guest",
+          "always": "Always",
+          "never": "Never",
+          "capability": {
+            "publishDirectLink": {
+              "label": "Publish workflows via shareable link",
+              "description": "Create a public direct link to a workflow snapshot. Recipients can run; recipient's workspace pays."
+            },
+            "submitToHub": {
+              "label": "Submit workflows to Comfy Hub",
+              "description": "Send a workflow for Hub listing. Each submission still requires Admin approval to go live."
+            },
+            "approveHubSubmissions": {
+              "label": "Approve Comfy Hub submissions",
+              "description": "Decide whether a submitted workflow is published to the Hub. Delegating this lets Members act on the approval queue."
+            },
+            "editAllowlists": {
+              "label": "Edit workspace model and custom-node allowlists",
+              "description": "Add or remove entries from the workspace allowlists that constrain cloud assets."
+            },
+            "configureWorkspace": {
+              "label": "Configure workspace settings",
+              "description": "Edit workspace-wide settings such as data and training opt-out. Billing remains Admin-only and is not delegable."
+            }
+          }
+        },
+        "inviteDialog": {
+          "title": "Invite to {workspace}",
+          "subtitle": "We'll send an email invite. They can accept on any device.",
+          "emailLabel": "Email address",
+          "emailPlaceholder": "name@team.com",
+          "roleLabel": "Workspace role",
+          "submit": "Send invite",
+          "cancel": "Cancel",
+          "roleHint": {
+            "admin": "Full workspace control, including billing and member management.",
+            "member": "Standard collaborator. Can invite others, create projects, and use the library.",
+            "guest": "Limited to assets and projects they're explicitly invited to."
+          }
+        },
+        "removeConfirm": "Remove {name} from this workspace?"
+      },
+      "settings": {
+        "title": "Workspace settings",
+        "subtitle": "Identity, allowlists, and other workspace-wide configuration.",
+        "guestEmpty": "Workspace settings are not available to guests.",
+        "general": {
+          "heading": "General",
+          "description": "Workspace identity. Visible to all members.",
+          "nameLabel": "Workspace name",
+          "descriptionLabel": "Description",
+          "descriptionPlaceholder": "Add a short description of this workspace.",
+          "typeLabel": "Type",
+          "tierPersonal": "Personal workspace",
+          "tierTeam": "Team workspace",
+          "ownerLabel": "Owner",
+          "readOnly": "Only workspace Admins can edit identity."
+        },
+        "modelAllowlist": {
+          "heading": "Model allowlist",
+          "description": "Models permitted to run in this workspace.",
+          "placeholder": "e.g. sd_xl_base_1.0.safetensors"
+        },
+        "customNodeAllowlist": {
+          "heading": "Custom-node allowlist",
+          "description": "Custom-node packages permitted to install in this workspace.",
+          "placeholder": "e.g. ComfyUI-Manager"
+        },
+        "allowlist": {
+          "empty": "Nothing on the allowlist yet.",
+          "add": "Add",
+          "remove": "Remove",
+          "addedBy": "Added by {user} on {date}",
+          "delegationHint": "Allowlist editing is Admin-only here. Admins can delegate it on the Members → Permissions tab."
+        },
+        "billing": {
+          "heading": "Billing & subscription",
+          "description": "Plan, payment method, credit balance, and invoices for this workspace.",
+          "planLabel": "Plan",
+          "paymentLabel": "Payment method",
+          "creditLabel": "Credit balance",
+          "managePlan": "Manage plan",
+          "updatePayment": "Update payment",
+          "renewsOn": "Renews {date}",
+          "cancelsOn": "Cancels {date}",
+          "resetsOn": "Resets {date}",
+          "expires": "Expires {month}/{year}",
+          "card": "Card",
+          "noPayment": "No payment method on file",
+          "invoicesHeading": "Recent invoices",
+          "noInvoices": "No invoices yet.",
+          "ownershipNote": "Billing stays with the workspace, not the Admin. Transferring ownership does not move the payment method on file.",
+          "status": {
+            "active": "Active",
+            "past-due": "Past due",
+            "cancelled": "Cancelled"
+          },
+          "invoiceStatus": {
+            "paid": "Paid",
+            "open": "Open",
+            "past-due": "Past due"
+          }
+        },
+        "creditLimits": {
+          "heading": "Member credit limits",
+          "description": "Optional per-member ceilings on workspace credit usage.",
+          "mechanismNote": "Enforcement mechanism (hard block vs. soft warn vs. pre-charge reservation) is not yet decided — this surface captures the intent regardless.",
+          "unlimited": "Unlimited",
+          "clear": "Clear",
+          "noMembers": "Invite members to set per-member limits.",
+          "col": {
+            "member": "Member",
+            "limit": "Limit",
+            "period": "Period",
+            "usage": "Usage"
+          },
+          "period": {
+            "monthly": "Monthly",
+            "weekly": "Weekly",
+            "oneTime": "One-time"
+          }
+        },
+        "dataTraining": {
+          "heading": "Data & training policy",
+          "description": "Choose how workspace content interacts with model training.",
+          "toggleLabel": "Opt this workspace out of training",
+          "toggleHint": "When opt-out is on, workspace content and outputs are not used to train Comfy or partner models."
+        },
+        "hubQueue": {
+          "heading": "Hub publishing approval queue",
+          "description": "Submissions from members awaiting approval to list on Comfy Hub.",
+          "empty": "Nothing waiting for approval.",
+          "submittedBy": "Submitted by {user} on {date}",
+          "approve": "Approve",
+          "reject": "Reject"
+        },
+        "ownership": {
+          "heading": "Workspace ownership",
+          "description": "Transfer ownership to another Admin. Billing on file stays with the workspace.",
+          "selectPlaceholder": "Pick an Admin…",
+          "transfer": "Transfer ownership",
+          "noTargets": "No other Admins to transfer to. Promote a Member to Admin first on the Members tab.",
+          "billingNote": "The payment method on file does not transfer. The new owner can update it after the handover.",
+          "confirm": "Transfer ownership of this workspace to {name}?"
+        },
+        "danger": {
+          "heading": "Danger zone",
+          "description": "Permanent actions. Personal workspaces cannot be deleted.",
+          "deleteButton": "Delete workspace",
+          "confirm": "Delete \"{name}\"? This permanently removes the workspace and all its content."
+        }
+      }
+    }
+  },
   "g": {
     "shortcutSuffix": " ({shortcut})",
     "user": "User",

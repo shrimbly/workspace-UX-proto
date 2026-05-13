@@ -18,14 +18,14 @@ The wiki is the **authoritative source** for entity definitions, permission rule
 
 ### 1.1 Wiki layout
 
-| Path | What's there | Authority |
-|---|---|---|
-| `../IA_Plan/wiki/index.md` | Table of contents — start here | n/a |
-| `../IA_Plan/wiki/decisions/` | Settled positions (ADR-style). **Authoritative.** | Follow without re-litigating |
-| `../IA_Plan/wiki/entities/` | Entity definitions (User, Workspace, Project, Asset, Workflow, etc.) | Authoritative for fixture shape, naming, relationships |
-| `../IA_Plan/wiki/concepts/` | Cross-cutting ideas (three-level-permissions, sharing-vs-publishing, local-vs-cloud-integration, instance-management, personas-and-flows) | Authoritative for rules / models |
-| `../IA_Plan/wiki/open-questions.md` | Unresolved items, each with a `Proposed:` block | **Non-authoritative.** Use Proposed answers as working stance; record dependencies in `prototype/design-decisions.md` |
-| `../IA_Plan/sources/` | Raw Notion / CEO / meeting captures | Generally don't read directly — the wiki has synthesized these. Open only for verbatim quotes |
+| Path                                | What's there                                                                                                                              | Authority                                                                                                             |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `../IA_Plan/wiki/index.md`          | Table of contents — start here                                                                                                            | n/a                                                                                                                   |
+| `../IA_Plan/wiki/decisions/`        | Settled positions (ADR-style). **Authoritative.**                                                                                         | Follow without re-litigating                                                                                          |
+| `../IA_Plan/wiki/entities/`         | Entity definitions (User, Workspace, Project, Asset, Workflow, etc.)                                                                      | Authoritative for fixture shape, naming, relationships                                                                |
+| `../IA_Plan/wiki/concepts/`         | Cross-cutting ideas (three-level-permissions, sharing-vs-publishing, local-vs-cloud-integration, instance-management, personas-and-flows) | Authoritative for rules / models                                                                                      |
+| `../IA_Plan/wiki/open-questions.md` | Unresolved items, each with a `Proposed:` block                                                                                           | **Non-authoritative.** Use Proposed answers as working stance; record dependencies in `prototype/design-decisions.md` |
+| `../IA_Plan/sources/`               | Raw Notion / CEO / meeting captures                                                                                                       | Generally don't read directly — the wiki has synthesized these. Open only for verbatim quotes                         |
 
 ### 1.2 Current decisions (snapshot — re-check `../IA_Plan/wiki/decisions/`)
 
@@ -39,16 +39,16 @@ The wiki is the **authoritative source** for entity definitions, permission rule
 
 ### 1.3 How to use the wiki for prototype tasks
 
-| Task | Entry point |
-|---|---|
-| Building a screen for persona X | `concepts/personas-and-flows.md` — find X, see permission position + what they see/do |
-| Where does a saved workflow go? | `decisions/drafts-as-default-private-project.md` |
-| Wiring permissions logic | `concepts/three-level-permissions.md` |
-| Modeling fixture data | `entities/<entity>.md` for shape + relationships |
-| About to invent a behavior | Search `open-questions.md` for the topic. If a `Proposed:` exists, use it as the working answer + log the dependency |
-| Sharing flow | `concepts/sharing-vs-publishing.md` |
-| Local/cloud behavior | `concepts/local-vs-cloud-integration.md` |
-| Multi-workspace UX | persona #6 in `concepts/personas-and-flows.md` |
+| Task                            | Entry point                                                                                                          |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Building a screen for persona X | `concepts/personas-and-flows.md` — find X, see permission position + what they see/do                                |
+| Where does a saved workflow go? | `decisions/drafts-as-default-private-project.md`                                                                     |
+| Wiring permissions logic        | `concepts/three-level-permissions.md`                                                                                |
+| Modeling fixture data           | `entities/<entity>.md` for shape + relationships                                                                     |
+| About to invent a behavior      | Search `open-questions.md` for the topic. If a `Proposed:` exists, use it as the working answer + log the dependency |
+| Sharing flow                    | `concepts/sharing-vs-publishing.md`                                                                                  |
+| Local/cloud behavior            | `concepts/local-vs-cloud-integration.md`                                                                             |
+| Multi-workspace UX              | persona #6 in `concepts/personas-and-flows.md`                                                                       |
 
 ### 1.4 Don't
 
@@ -121,11 +121,11 @@ The upstream uses **Tailwind 4** + a component library under `src/components/`. 
 
 Markdown docs specific to the prototype live at the **repo root** under `prototype/` (not under `src/`).
 
-| File | Purpose |
-|---|---|
-| `prototype/INDEX.md` | Every prototyped flow: route, file path, wiki entries implemented |
+| File                            | Purpose                                                                                                                                                                                              |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prototype/INDEX.md`            | Every prototyped flow: route, file path, wiki entries implemented                                                                                                                                    |
 | `prototype/design-decisions.md` | Append-only log of design decisions made while building. Cross-ref each entry to wiki open questions. When something settles enough to feed back to the wiki, raise a new decision page in `IA_Plan` |
-| `prototype/flows/<NN-name>.md` | One file per flow: actor, entry point, step-by-step, branches, surfaces touched, edge cases, fixture state required |
+| `prototype/flows/<NN-name>.md`  | One file per flow: actor, entry point, step-by-step, branches, surfaces touched, edge cases, fixture state required                                                                                  |
 
 ### 3.1 Feedback loop back to the wiki
 
