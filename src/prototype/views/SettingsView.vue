@@ -177,7 +177,8 @@
           :description="
             t('prototype.views.settings.modelAllowlist.description')
           "
-          :entries="fixture.allowlists.models"
+          :entries="fixture.allowlists.models.entries"
+          :enabled="fixture.allowlists.models.enabled"
           :can-edit="canEditAllowlists"
           :add-placeholder="
             t('prototype.views.settings.modelAllowlist.placeholder')
@@ -185,6 +186,31 @@
           :added-by-label="addedByLabel"
           @add="(name) => personaStore.addAllowlistEntry('model', name)"
           @remove="(id) => personaStore.removeAllowlistEntry('model', id)"
+          @toggle-enabled="
+            (enabled) => personaStore.setAllowlistEnabled('model', enabled)
+          "
+        />
+
+        <AllowlistEditor
+          :title="t('prototype.views.settings.partnerNodeAllowlist.heading')"
+          :description="
+            t('prototype.views.settings.partnerNodeAllowlist.description')
+          "
+          :entries="fixture.allowlists.partnerNodes.entries"
+          :enabled="fixture.allowlists.partnerNodes.enabled"
+          :can-edit="canEditAllowlists"
+          :add-placeholder="
+            t('prototype.views.settings.partnerNodeAllowlist.placeholder')
+          "
+          :added-by-label="addedByLabel"
+          @add="(name) => personaStore.addAllowlistEntry('partner-node', name)"
+          @remove="
+            (id) => personaStore.removeAllowlistEntry('partner-node', id)
+          "
+          @toggle-enabled="
+            (enabled) =>
+              personaStore.setAllowlistEnabled('partner-node', enabled)
+          "
         />
 
         <AllowlistEditor
@@ -192,7 +218,8 @@
           :description="
             t('prototype.views.settings.customNodeAllowlist.description')
           "
-          :entries="fixture.allowlists.customNodes"
+          :entries="fixture.allowlists.customNodes.entries"
+          :enabled="fixture.allowlists.customNodes.enabled"
           :can-edit="canEditAllowlists"
           :add-placeholder="
             t('prototype.views.settings.customNodeAllowlist.placeholder')
@@ -200,6 +227,10 @@
           :added-by-label="addedByLabel"
           @add="(name) => personaStore.addAllowlistEntry('custom-node', name)"
           @remove="(id) => personaStore.removeAllowlistEntry('custom-node', id)"
+          @toggle-enabled="
+            (enabled) =>
+              personaStore.setAllowlistEnabled('custom-node', enabled)
+          "
         />
 
         <p

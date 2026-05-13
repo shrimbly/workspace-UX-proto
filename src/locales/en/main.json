@@ -320,7 +320,7 @@
           "general": "General",
           "allowlists": "Allowlists",
           "publishing": "Publishing",
-          "billing": "Billing",
+          "billing": "Billing & credit limits",
           "advanced": "Advanced"
         },
         "general": {
@@ -342,15 +342,24 @@
         },
         "customNodeAllowlist": {
           "heading": "Custom-node allowlist",
-          "description": "Custom-node packages permitted to install in this workspace.",
+          "description": "Community custom-node packages permitted to install in this workspace.",
           "placeholder": "e.g. ComfyUI-Manager"
+        },
+        "partnerNodeAllowlist": {
+          "heading": "Partner-node allowlist",
+          "description": "Vetted partner integrations (e.g. RunwayML, Luma, Black Forest Labs) permitted in this workspace.",
+          "placeholder": "e.g. RunwayML / Gen-3 Alpha"
         },
         "allowlist": {
           "empty": "Nothing on the allowlist yet.",
           "add": "Add",
           "remove": "Remove",
           "addedBy": "Added by {user} on {date}",
-          "delegationHint": "Allowlist editing is Admin-only here. Admins can delegate it on the Members → Permissions tab."
+          "delegationHint": "Allowlist editing is Admin-only here. Admins can delegate it on the Members → Permissions tab.",
+          "enforceLabel": "Enforce",
+          "statusEnforced": "Enforced",
+          "statusOff": "Off",
+          "offHint": "Enforcement is off — everything is allowed regardless of the entries below. Turn on Enforce to restrict to the listed items."
         },
         "billing": {
           "heading": "Billing & subscription",

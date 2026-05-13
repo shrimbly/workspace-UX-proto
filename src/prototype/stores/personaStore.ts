@@ -173,32 +173,59 @@ export const usePrototypePersonaStore = defineStore('prototype-persona', () => {
     )
   }
 
+  const allowlistKeyByKind = {
+    model: 'models',
+    'custom-node': 'customNodes',
+    'partner-node': 'partnerNodes'
+  } as const
+
+  const allowlistIdPrefixByKind = {
+    model: 'mdl',
+    'custom-node': 'cn',
+    'partner-node': 'pn'
+  } as const
+
   function addAllowlistEntry(kind: AllowlistKind, name: string) {
     const trimmed = name.trim()
     if (!trimmed) return
-    const key = kind === 'model' ? 'models' : 'customNodes'
+    const key = allowlistKeyByKind[kind]
     const existing = fixture.value.allowlists[key]
-    if (existing.some((e) => e.name === trimmed)) return
+    if (existing.entries.some((e) => e.name === trimmed)) return
     const today = new Date().toISOString().slice(0, 10)
     fixture.value.allowlists = {
       ...fixture.value.allowlists,
-      [key]: [
+      [key]: {
         ...existing,
-        {
-          id: `${kind === 'model' ? 'mdl' : 'cn'}-${Date.now()}`,
-          name: trimmed,
-          addedAt: today,
-          addedByUserId: fixture.value.currentUser.id
-        }
-      ]
+        entries: [
+          ...existing.entries,
+          {
+            id: `${allowlistIdPrefixByKind[kind]}-${Date.now()}`,
+            name: trimmed,
+            addedAt: today,
+            addedByUserId: fixture.value.currentUser.id
+          }
+        ]
+      }
     }
   }
 
   function removeAllowlistEntry(kind: AllowlistKind, entryId: string) {
-    const key = kind === 'model' ? 'models' : 'customNodes'
+    const key = allowlistKeyByKind[kind]
+    const existing = fixture.value.allowlists[key]
     fixture.value.allowlists = {
       ...fixture.value.allowlists,
-      [key]: fixture.value.allowlists[key].filter((e) => e.id !== entryId)
+      [key]: {
+        ...existing,
+        entries: existing.entries.filter((e) => e.id !== entryId)
+      }
+    }
+  }
+
+  function setAllowlistEnabled(kind: AllowlistKind, enabled: boolean) {
+    const key = allowlistKeyByKind[kind]
+    fixture.value.allowlists = {
+      ...fixture.value.allowlists,
+      [key]: { ...fixture.value.allowlists[key], enabled }
     }
   }
 
@@ -381,6 +408,7 @@ export const usePrototypePersonaStore = defineStore('prototype-persona', () => {
     setWorkspaceDescription,
     addAllowlistEntry,
     removeAllowlistEntry,
+    setAllowlistEnabled,
     setMemberCreditLimit,
     removeMemberCreditLimit,
     setDataTrainingOptOut,

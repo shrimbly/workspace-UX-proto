@@ -525,41 +525,70 @@ export const adminFixture: PersonaFixture = {
     'configure-workspace': false
   } satisfies RoleGrants,
   allowlists: {
-    models: [
-      {
-        id: 'mdl-sdxl-base',
-        name: 'sd_xl_base_1.0.safetensors',
-        addedAt: '2026-04-12',
-        addedByUserId: user.id
-      },
-      {
-        id: 'mdl-sdxl-refiner',
-        name: 'sd_xl_refiner_1.0.safetensors',
-        addedAt: '2026-04-12',
-        addedByUserId: user.id
-      },
-      {
-        id: 'mdl-flux-dev',
-        name: 'flux1-dev.safetensors',
-        addedAt: '2026-04-29',
-        addedByUserId: 'user-alex',
-        note: 'Internal eval — not for client work yet.'
-      }
-    ],
-    customNodes: [
-      {
-        id: 'cn-comfyui-manager',
-        name: 'ComfyUI-Manager',
-        addedAt: '2026-04-12',
-        addedByUserId: user.id
-      },
-      {
-        id: 'cn-comfyui-controlnet-aux',
-        name: 'comfyui_controlnet_aux',
-        addedAt: '2026-04-18',
-        addedByUserId: user.id
-      }
-    ]
+    models: {
+      enabled: true,
+      entries: [
+        {
+          id: 'mdl-sdxl-base',
+          name: 'sd_xl_base_1.0.safetensors',
+          addedAt: '2026-04-12',
+          addedByUserId: user.id
+        },
+        {
+          id: 'mdl-sdxl-refiner',
+          name: 'sd_xl_refiner_1.0.safetensors',
+          addedAt: '2026-04-12',
+          addedByUserId: user.id
+        },
+        {
+          id: 'mdl-flux-dev',
+          name: 'flux1-dev.safetensors',
+          addedAt: '2026-04-29',
+          addedByUserId: 'user-alex',
+          note: 'Internal eval — not for client work yet.'
+        }
+      ]
+    },
+    customNodes: {
+      enabled: true,
+      entries: [
+        {
+          id: 'cn-comfyui-manager',
+          name: 'ComfyUI-Manager',
+          addedAt: '2026-04-12',
+          addedByUserId: user.id
+        },
+        {
+          id: 'cn-comfyui-controlnet-aux',
+          name: 'comfyui_controlnet_aux',
+          addedAt: '2026-04-18',
+          addedByUserId: user.id
+        }
+      ]
+    },
+    partnerNodes: {
+      enabled: true,
+      entries: [
+        {
+          id: 'pn-runwayml',
+          name: 'RunwayML / Gen-3 Alpha',
+          addedAt: '2026-03-22',
+          addedByUserId: user.id
+        },
+        {
+          id: 'pn-luma',
+          name: 'Luma / Dream Machine',
+          addedAt: '2026-03-22',
+          addedByUserId: user.id
+        },
+        {
+          id: 'pn-bfl-flux',
+          name: 'Black Forest Labs / FLUX Pro',
+          addedAt: '2026-04-05',
+          addedByUserId: 'user-pablo'
+        }
+      ]
+    }
   },
   billing: {
     subscription: {

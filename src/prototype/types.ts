@@ -81,7 +81,9 @@ export interface HubSubmission {
 // Workspace-level allowlists per
 // ../IA_Plan/wiki/concepts/three-level-permissions.md §Workspace level.
 // "Set workspace-level model + custom-node allowlists (delegable to Members)".
-export type AllowlistKind = 'model' | 'custom-node'
+// Partner nodes are vendor-vetted custom nodes — a distinct allowlist
+// from the open community custom-node list.
+export type AllowlistKind = 'model' | 'custom-node' | 'partner-node'
 
 export interface AllowlistEntry {
   id: string
@@ -91,9 +93,19 @@ export interface AllowlistEntry {
   note?: string
 }
 
+// Each allowlist is an enabled flag + curated entries. When `enabled`
+// is false the gate is off — anything is permitted regardless of what
+// the entries list says. Admins may still curate entries while the
+// gate is off.
+export interface AllowlistConfig {
+  enabled: boolean
+  entries: AllowlistEntry[]
+}
+
 export interface WorkspaceAllowlists {
-  models: AllowlistEntry[]
-  customNodes: AllowlistEntry[]
+  models: AllowlistConfig
+  customNodes: AllowlistConfig
+  partnerNodes: AllowlistConfig
 }
 
 export interface Project {

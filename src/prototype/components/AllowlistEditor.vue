@@ -2,22 +2,73 @@
   Implements:
     concept: ../IA_Plan/wiki/concepts/three-level-permissions.md
              — workspace-level model + custom-node allowlists
-             (delegable to Members via edit-allowlists grant)
+             (delegable to Members via edit-allowlists grant).
 
-  Reusable editor for a single allowlist (model or custom-node).
+  Reusable editor for a single allowlist (model, custom-node, partner-node).
+  Has an enable/disable toggle: when disabled, the gate is off — anything
+  is allowed, regardless of entries. Admins can still curate the entries
+  list while disabled.
   Read-only when canEdit is false — list still shows but no add/remove
-  controls.
+  or toggle controls.
 -->
 <template>
   <section
-    class="flex flex-col gap-3 rounded-xl border border-border-subtle bg-modal-card-background p-5"
+    :class="
+      cn(
+        'flex flex-col gap-3 rounded-xl border border-border-subtle bg-modal-card-background p-5',
+        !enabled && 'opacity-90'
+      )
+    "
   >
-    <header class="flex flex-col gap-0.5">
-      <h2 class="text-base font-semibold text-base-foreground">
-        {{ title }}
-      </h2>
-      <p class="text-xs text-muted-foreground">{{ description }}</p>
+    <header class="flex items-start justify-between gap-3">
+      <div class="flex flex-col gap-0.5">
+        <div class="flex items-center gap-2">
+          <h2 class="text-base font-semibold text-base-foreground">
+            {{ title }}
+          </h2>
+          <span
+            :class="
+              cn(
+                'inline-flex h-5 items-center rounded-full px-2 text-[10px] tracking-wide uppercase',
+                enabled
+                  ? 'bg-secondary-background text-base-foreground'
+                  : 'bg-secondary-background text-muted-foreground'
+              )
+            "
+          >
+            {{
+              enabled
+                ? t('prototype.views.settings.allowlist.statusEnforced')
+                : t('prototype.views.settings.allowlist.statusOff')
+            }}
+          </span>
+        </div>
+        <p class="text-xs text-muted-foreground">{{ description }}</p>
+      </div>
+      <label
+        :class="
+          cn('inline-flex items-center gap-2 text-xs', !canEdit && 'opacity-60')
+        "
+      >
+        <input
+          :checked="enabled"
+          :disabled="!canEdit"
+          type="checkbox"
+          class="size-4 cursor-pointer appearance-auto accent-base-foreground disabled:cursor-not-allowed"
+          @change="
+            emit('toggle-enabled', ($event.target as HTMLInputElement).checked)
+          "
+        />
+        <span>{{ t('prototype.views.settings.allowlist.enforceLabel') }}</span>
+      </label>
     </header>
+
+    <p
+      v-if="!enabled"
+      class="rounded-lg border border-dashed border-border-subtle bg-base-background/40 px-3 py-2 text-xs text-muted-foreground italic"
+    >
+      {{ t('prototype.views.settings.allowlist.offHint') }}
+    </p>
 
     <div
       v-if="!entries.length"
@@ -75,6 +126,7 @@
 </template>
 
 <script setup lang="ts">
+import { cn } from '@comfyorg/tailwind-utils'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -84,6 +136,7 @@ const {
   title,
   description,
   entries,
+  enabled,
   canEdit = false,
   addPlaceholder,
   addedByLabel
@@ -91,6 +144,7 @@ const {
   title: string
   description: string
   entries: AllowlistEntry[]
+  enabled: boolean
   canEdit?: boolean
   addPlaceholder: string
   addedByLabel: (userId: string) => string
@@ -99,6 +153,7 @@ const {
 const emit = defineEmits<{
   add: [name: string]
   remove: [entryId: string]
+  'toggle-enabled': [enabled: boolean]
 }>()
 
 const { t } = useI18n()

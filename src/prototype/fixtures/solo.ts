@@ -94,8 +94,9 @@ export const soloFixture: PersonaFixture = {
     'configure-workspace': false
   },
   allowlists: {
-    models: [],
-    customNodes: []
+    models: { enabled: false, entries: [] },
+    customNodes: { enabled: false, entries: [] },
+    partnerNodes: { enabled: false, entries: [] }
   },
   billing: {
     subscription: {
