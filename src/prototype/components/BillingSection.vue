@@ -7,15 +7,13 @@
              §"Workspace level" — Manage billing & subscription, view
              credit balance. Admin-only, not delegable.
 
-  Visual design mirrors the production subscription card at
-  src/platform/workspace/components/SubscriptionPanelContentWorkspace.vue:
-  rounded-2xl outer card, plan + price + renewal date as the header,
-  a credits sub-card on a secondary background, and a benefits list.
-  Buttons are affordance stubs in the prototype.
+  Mirrors the production subscription card layout at
+  src/platform/workspace/components/SubscriptionPanelContentWorkspace.vue.
+  Uses the prototype Settings design system (SettingsPanel, SettingsSubCard).
 -->
 <template>
   <div class="flex flex-col gap-6">
-    <section class="rounded-2xl border border-interface-stroke p-6">
+    <SettingsPanel>
       <div
         class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-2"
       >
@@ -32,7 +30,7 @@
             </span>
           </div>
           <div class="flex items-baseline gap-1 font-semibold">
-            <span class="text-2xl">${{ tierPrice }}</span>
+            <span class="text-2xl text-text-primary">${{ tierPrice }}</span>
             <span class="text-base text-text-secondary">
               {{
                 tier === 'personal'
@@ -55,28 +53,22 @@
         </div>
 
         <div class="flex flex-wrap gap-2 md:ml-auto">
-          <button
+          <Button
             v-if="!isFreeTier"
-            type="button"
-            class="inline-flex h-10 cursor-pointer appearance-none items-center rounded-lg border-0 bg-interface-menu-component-surface-selected px-4 text-sm text-text-primary transition-opacity hover:opacity-90"
+            variant="secondary"
+            size="lg"
             @click="onManageStub('payment')"
           >
             {{ t('subscription.managePayment') }}
-          </button>
-          <button
-            type="button"
-            class="inline-flex h-10 cursor-pointer items-center rounded-lg bg-base-foreground px-4 text-sm font-medium text-base-background transition-opacity hover:opacity-90"
-            @click="onManageStub('plan')"
-          >
+          </Button>
+          <Button variant="inverted" size="lg" @click="onManageStub('plan')">
             {{ t('subscription.upgradePlan') }}
-          </button>
+          </Button>
         </div>
       </div>
 
-      <div class="flex flex-col gap-6 pt-6 lg:flex-row lg:items-stretch">
-        <div
-          class="relative flex flex-1 flex-col justify-between gap-6 rounded-2xl bg-secondary-background p-5 lg:max-w-sm"
-        >
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-stretch">
+        <SettingsSubCard class="flex-1 lg:max-w-sm">
           <div class="flex flex-col gap-2">
             <div class="text-sm text-muted">
               {{ t('subscription.totalCredits') }}
@@ -89,7 +81,9 @@
           <table class="text-sm text-muted">
             <tbody>
               <tr>
-                <td class="pr-4 text-left align-middle font-bold">
+                <td
+                  class="pr-4 text-left align-middle font-bold text-text-primary"
+                >
                   {{ billing.creditBalance.monthlyAllowance.toLocaleString() }}
                   /
                   {{ billing.creditBalance.monthlyAllowance.toLocaleString() }}
@@ -103,7 +97,11 @@
                 </td>
               </tr>
               <tr>
-                <td class="pr-4 text-left align-middle font-bold">0</td>
+                <td
+                  class="pr-4 text-left align-middle font-bold text-text-primary"
+                >
+                  0
+                </td>
                 <td class="align-middle">
                   {{ t('subscription.creditsYouveAdded') }}
                 </td>
@@ -111,59 +109,64 @@
             </tbody>
           </table>
 
-          <button
+          <Button
             v-if="!isFreeTier"
-            type="button"
-            class="inline-flex min-h-8 cursor-pointer appearance-none items-center justify-center rounded-lg border-0 bg-interface-menu-component-surface-selected p-2 text-sm text-text-primary transition-opacity hover:opacity-90"
+            variant="secondary"
+            size="lg"
+            class="w-full"
             @click="onManageStub('credits')"
           >
             {{ t('subscription.addCredits') }}
-          </button>
-        </div>
+          </Button>
+        </SettingsSubCard>
 
         <div class="flex flex-col gap-2">
           <div class="text-sm text-text-primary">
             {{ t('subscription.yourPlanIncludes') }}
           </div>
-          <div class="flex flex-col gap-0">
+          <div class="flex flex-col">
             <div
               v-for="benefit in benefits"
               :key="benefit.key"
               class="flex items-center gap-2 py-2"
             >
               <i class="icon-[lucide--check] size-3 text-text-primary" />
-              <span class="text-sm text-muted">{{ benefit.label }}</span>
+              <span class="text-sm text-text-secondary">
+                {{ benefit.label }}
+              </span>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </SettingsPanel>
 
-    <section
-      v-if="tier === 'team'"
-      class="flex items-center justify-between gap-1 rounded-2xl border border-interface-stroke p-6 text-sm"
-    >
-      <div class="flex flex-col gap-2">
-        <h4 class="m-0 text-sm text-text-primary">
-          {{ t('subscription.nextMonthInvoice') }}
-        </h4>
-        <button
-          type="button"
-          class="cursor-pointer appearance-none border-0 bg-transparent p-0 text-left text-muted-foreground underline"
-          @click="onManageStub('invoices')"
-        >
-          {{ t('subscription.invoiceHistory') }}
-        </button>
+    <SettingsPanel v-if="tier === 'team'">
+      <div class="flex items-center justify-between gap-1">
+        <div class="flex flex-col gap-2">
+          <h4 class="m-0 text-sm text-text-primary">
+            {{ t('subscription.nextMonthInvoice') }}
+          </h4>
+          <Button
+            variant="link"
+            size="sm"
+            class="self-start px-0 underline"
+            @click="onManageStub('invoices')"
+          >
+            {{ t('subscription.invoiceHistory') }}
+          </Button>
+        </div>
+        <div class="flex flex-col items-end gap-2">
+          <h4 class="m-0 font-bold text-text-primary">
+            ${{ nextMonthInvoice }}
+          </h4>
+          <h5 class="m-0 text-sm text-text-secondary">
+            {{ t('subscription.memberCount', billableMemberCount) }}
+          </h5>
+        </div>
       </div>
-      <div class="flex flex-col items-end gap-2">
-        <h4 class="m-0 font-bold">${{ nextMonthInvoice }}</h4>
-        <h5 class="m-0 text-muted-foreground">
-          {{ t('subscription.memberCount', billableMemberCount) }}
-        </h5>
-      </div>
-    </section>
+    </SettingsPanel>
 
-    <p class="text-xs text-text-secondary italic">
+    <p class="m-0 text-xs text-text-secondary italic">
       {{ t('prototype.views.settings.billing.ownershipNote') }}
     </p>
   </div>
@@ -173,6 +176,10 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import Button from '@/components/ui/button/Button.vue'
+
+import SettingsPanel from './settings/SettingsPanel.vue'
+import SettingsSubCard from './settings/SettingsSubCard.vue'
 import type { WorkspaceBilling, WorkspacePlan, WorkspaceTier } from '../types'
 
 const { billing, tier, billableMemberCount } = defineProps<{

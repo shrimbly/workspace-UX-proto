@@ -4,151 +4,147 @@
              — Proposed: UI surface required regardless of mechanism.
     concept: ../IA_Plan/wiki/concepts/three-level-permissions.md
              §"Workspace level" — Admin-only, not delegable.
-
-  Per-member ceiling + period + reset cadence editor. Mechanism is TBD
-  (hard block / soft warn / pre-charge) — copy reflects that.
 -->
 <template>
-  <section
-    class="flex flex-col gap-4 rounded-xl border border-border-subtle bg-modal-card-background p-5"
+  <SettingsPanel
+    :title="t('prototype.views.settings.creditLimits.heading')"
+    :description="t('prototype.views.settings.creditLimits.description')"
   >
-    <header class="flex flex-col gap-0.5">
-      <h2 class="text-base font-semibold text-base-foreground">
-        {{ t('prototype.views.settings.creditLimits.heading') }}
-      </h2>
-      <p class="text-xs text-muted-foreground">
-        {{ t('prototype.views.settings.creditLimits.description') }}
+    <SettingsSubCard>
+      <p class="m-0 text-sm text-text-secondary italic">
+        {{ t('prototype.views.settings.creditLimits.mechanismNote') }}
       </p>
-    </header>
+    </SettingsSubCard>
 
-    <p class="text-xs text-muted-foreground italic">
-      {{ t('prototype.views.settings.creditLimits.mechanismNote') }}
-    </p>
-
-    <div class="overflow-hidden rounded-lg border border-border-subtle">
-      <table class="w-full border-collapse text-sm">
-        <thead class="bg-secondary-background text-left">
-          <tr>
-            <th class="px-3 py-2 font-medium">
-              {{ t('prototype.views.settings.creditLimits.col.member') }}
-            </th>
-            <th class="px-3 py-2 font-medium">
-              {{ t('prototype.views.settings.creditLimits.col.limit') }}
-            </th>
-            <th class="px-3 py-2 font-medium">
-              {{ t('prototype.views.settings.creditLimits.col.period') }}
-            </th>
-            <th class="px-3 py-2 font-medium">
-              {{ t('prototype.views.settings.creditLimits.col.usage') }}
-            </th>
-            <th class="w-24 px-3 py-2" />
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="row in rows"
-            :key="row.memberId"
-            class="border-t border-border-subtle"
+    <SettingsTable>
+      <thead class="bg-secondary-background">
+        <tr>
+          <th
+            class="px-3 py-2 text-left text-xs font-medium tracking-wide text-muted uppercase"
           >
-            <td class="px-3 py-2">
-              <div class="flex flex-col gap-0.5">
-                <span class="font-medium">{{ row.name }}</span>
-                <span class="text-xs text-muted-foreground">{{
-                  row.email
-                }}</span>
-              </div>
-            </td>
-            <td class="px-3 py-2">
-              <input
-                :value="row.limit"
-                type="number"
-                min="0"
-                step="50"
-                class="h-8 w-24 rounded-md border border-border-subtle bg-base-background px-2 text-sm outline-none focus:border-base-foreground"
-                @change="onLimitChange(row.memberId, row.period, $event)"
-              />
-            </td>
-            <td class="px-3 py-2">
-              <select
-                :value="row.period"
-                class="h-8 rounded-md border border-border-subtle bg-base-background px-2 text-sm outline-none focus:border-base-foreground"
-                @change="onPeriodChange(row.memberId, row.limit, $event)"
-              >
-                <option value="monthly">
-                  {{
-                    t('prototype.views.settings.creditLimits.period.monthly')
-                  }}
-                </option>
-                <option value="weekly">
-                  {{ t('prototype.views.settings.creditLimits.period.weekly') }}
-                </option>
-                <option value="one-time">
-                  {{
-                    t('prototype.views.settings.creditLimits.period.oneTime')
-                  }}
-                </option>
-              </select>
-            </td>
-            <td class="px-3 py-2">
-              <div class="flex flex-col gap-1">
-                <div class="flex items-baseline gap-1">
-                  <span class="text-sm">
-                    {{ row.used.toLocaleString() }}
-                  </span>
-                  <span class="text-xs text-muted-foreground">
-                    /
-                    {{
-                      row.limit > 0
-                        ? row.limit.toLocaleString()
-                        : t('prototype.views.settings.creditLimits.unlimited')
-                    }}
-                  </span>
-                </div>
-                <div
-                  v-if="row.limit > 0"
-                  class="h-1 w-32 overflow-hidden rounded-full bg-secondary-background"
-                >
-                  <div
-                    class="h-full"
-                    :class="
-                      row.used >= row.limit
-                        ? 'bg-accent-warning'
-                        : 'bg-base-foreground'
-                    "
-                    :style="{ width: `${row.usagePct}%` }"
-                  />
-                </div>
-              </div>
-            </td>
-            <td class="p-2 text-right">
-              <button
-                v-if="row.hasLimit"
-                type="button"
-                class="text-danger-foreground inline-flex h-8 cursor-pointer appearance-none items-center justify-center rounded-lg border-0 bg-transparent px-2 text-xs transition-colors hover:bg-secondary-background"
-                @click="emit('remove', row.memberId)"
-              >
-                {{ t('prototype.views.settings.creditLimits.clear') }}
-              </button>
-            </td>
-          </tr>
-          <tr v-if="!rows.length">
-            <td
-              colspan="5"
-              class="px-3 py-6 text-center text-xs text-muted-foreground"
+            {{ t('prototype.views.settings.creditLimits.col.member') }}
+          </th>
+          <th
+            class="px-3 py-2 text-left text-xs font-medium tracking-wide text-muted uppercase"
+          >
+            {{ t('prototype.views.settings.creditLimits.col.limit') }}
+          </th>
+          <th
+            class="px-3 py-2 text-left text-xs font-medium tracking-wide text-muted uppercase"
+          >
+            {{ t('prototype.views.settings.creditLimits.col.period') }}
+          </th>
+          <th
+            class="px-3 py-2 text-left text-xs font-medium tracking-wide text-muted uppercase"
+          >
+            {{ t('prototype.views.settings.creditLimits.col.usage') }}
+          </th>
+          <th class="w-24 px-3 py-2" />
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="row in rows"
+          :key="row.memberId"
+          class="border-t border-interface-stroke"
+        >
+          <td class="px-3 py-2 align-middle">
+            <div class="flex flex-col gap-0.5">
+              <span class="text-sm text-text-primary">{{ row.name }}</span>
+              <span class="text-xs text-muted">{{ row.email }}</span>
+            </div>
+          </td>
+          <td class="px-3 py-2 align-middle">
+            <input
+              :value="row.limit"
+              type="number"
+              min="0"
+              step="50"
+              class="h-8 w-24 rounded-md border border-interface-stroke bg-base-background px-2 text-sm text-text-primary outline-none focus:border-text-primary"
+              @change="onLimitChange(row.memberId, row.period, $event)"
+            />
+          </td>
+          <td class="px-3 py-2 align-middle">
+            <select
+              :value="row.period"
+              class="h-8 rounded-md border border-interface-stroke bg-base-background px-2 text-sm text-text-primary outline-none focus:border-text-primary"
+              @change="onPeriodChange(row.memberId, row.limit, $event)"
             >
-              {{ t('prototype.views.settings.creditLimits.noMembers') }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+              <option value="monthly">
+                {{ t('prototype.views.settings.creditLimits.period.monthly') }}
+              </option>
+              <option value="weekly">
+                {{ t('prototype.views.settings.creditLimits.period.weekly') }}
+              </option>
+              <option value="one-time">
+                {{ t('prototype.views.settings.creditLimits.period.oneTime') }}
+              </option>
+            </select>
+          </td>
+          <td class="px-3 py-2 align-middle">
+            <div class="flex flex-col gap-1">
+              <div class="flex items-baseline gap-1 text-sm">
+                <span class="text-text-primary">
+                  {{ row.used.toLocaleString() }}
+                </span>
+                <span class="text-xs text-muted">
+                  /
+                  {{
+                    row.limit > 0
+                      ? row.limit.toLocaleString()
+                      : t('prototype.views.settings.creditLimits.unlimited')
+                  }}
+                </span>
+              </div>
+              <div
+                v-if="row.limit > 0"
+                class="h-1 w-32 overflow-hidden rounded-full bg-base-background"
+              >
+                <div
+                  class="h-full"
+                  :class="
+                    row.used >= row.limit
+                      ? 'bg-warning-background'
+                      : 'bg-text-primary'
+                  "
+                  :style="{ width: `${row.usagePct}%` }"
+                />
+              </div>
+            </div>
+          </td>
+          <td class="px-3 py-2 text-right align-middle">
+            <Button
+              v-if="row.hasLimit"
+              variant="muted-textonly"
+              size="sm"
+              @click="emit('remove', row.memberId)"
+            >
+              {{ t('prototype.views.settings.creditLimits.clear') }}
+            </Button>
+          </td>
+        </tr>
+        <tr v-if="!rows.length">
+          <td
+            colspan="5"
+            class="px-3 py-6 text-center text-sm text-text-secondary"
+          >
+            {{ t('prototype.views.settings.creditLimits.noMembers') }}
+          </td>
+        </tr>
+      </tbody>
+    </SettingsTable>
+  </SettingsPanel>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import Button from '@/components/ui/button/Button.vue'
+
+import SettingsPanel from './settings/SettingsPanel.vue'
+import SettingsSubCard from './settings/SettingsSubCard.vue'
+import SettingsTable from './settings/SettingsTable.vue'
 import type {
   CreditLimitPeriod,
   MemberCreditLimit,

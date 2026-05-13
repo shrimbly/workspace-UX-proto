@@ -6,48 +6,28 @@
 
   Reusable editor for a single allowlist (model, custom-node, partner-node).
   Has an enable/disable toggle: when disabled, the gate is off — anything
-  is allowed, regardless of entries. Admins can still curate the entries
+  is allowed regardless of entries. Admins can still curate the entries
   list while disabled.
-  Read-only when canEdit is false — list still shows but no add/remove
-  or toggle controls.
 -->
 <template>
-  <section
-    :class="
-      cn(
-        'flex flex-col gap-3 rounded-xl border border-border-subtle bg-modal-card-background p-5',
-        !enabled && 'opacity-90'
-      )
-    "
-  >
-    <header class="flex items-start justify-between gap-3">
-      <div class="flex flex-col gap-0.5">
-        <div class="flex items-center gap-2">
-          <h2 class="text-base font-semibold text-base-foreground">
-            {{ title }}
-          </h2>
-          <span
-            :class="
-              cn(
-                'inline-flex h-5 items-center rounded-full px-2 text-[10px] tracking-wide uppercase',
-                enabled
-                  ? 'bg-secondary-background text-base-foreground'
-                  : 'bg-secondary-background text-muted-foreground'
-              )
-            "
-          >
-            {{
-              enabled
-                ? t('prototype.views.settings.allowlist.statusEnforced')
-                : t('prototype.views.settings.allowlist.statusOff')
-            }}
-          </span>
-        </div>
-        <p class="text-xs text-muted-foreground">{{ description }}</p>
-      </div>
+  <SettingsPanel :title="title" :description="description">
+    <template #actions>
+      <span
+        class="inline-flex h-5 items-center rounded-full bg-secondary-background px-2 text-[10px] font-medium tracking-wide uppercase"
+        :class="enabled ? 'text-text-primary' : 'text-muted'"
+      >
+        {{
+          enabled
+            ? t('prototype.views.settings.allowlist.statusEnforced')
+            : t('prototype.views.settings.allowlist.statusOff')
+        }}
+      </span>
       <label
         :class="
-          cn('inline-flex items-center gap-2 text-xs', !canEdit && 'opacity-60')
+          cn(
+            'inline-flex items-center gap-2 text-sm text-text-secondary',
+            !canEdit && 'opacity-60'
+          )
         "
       >
         <input
@@ -61,68 +41,76 @@
         />
         <span>{{ t('prototype.views.settings.allowlist.enforceLabel') }}</span>
       </label>
-    </header>
+    </template>
 
-    <p
-      v-if="!enabled"
-      class="rounded-lg border border-dashed border-border-subtle bg-base-background/40 px-3 py-2 text-xs text-muted-foreground italic"
-    >
-      {{ t('prototype.views.settings.allowlist.offHint') }}
-    </p>
+    <SettingsSubCard v-if="!enabled">
+      <p class="m-0 text-sm text-text-secondary">
+        {{ t('prototype.views.settings.allowlist.offHint') }}
+      </p>
+    </SettingsSubCard>
 
-    <div
-      v-if="!entries.length"
-      class="rounded-lg border border-dashed border-border-subtle px-4 py-6 text-center text-xs text-muted-foreground"
-    >
-      {{ t('prototype.views.settings.allowlist.empty') }}
-    </div>
-    <ul v-else class="m-0 flex list-none flex-col gap-1 p-0">
-      <li
-        v-for="entry in entries"
-        :key="entry.id"
-        class="flex items-center justify-between gap-3 rounded-lg border border-border-subtle px-3 py-2"
-      >
-        <div class="flex min-w-0 flex-col gap-0.5">
-          <span class="truncate text-sm font-medium">{{ entry.name }}</span>
-          <span class="text-xs text-muted-foreground">
-            {{
-              t('prototype.views.settings.allowlist.addedBy', {
-                user: addedByLabel(entry.addedByUserId),
-                date: entry.addedAt
-              })
-            }}
-          </span>
-          <span v-if="entry.note" class="text-xs text-muted-foreground italic">
-            {{ entry.note }}
-          </span>
-        </div>
-        <button
-          v-if="canEdit"
-          type="button"
-          class="text-danger-foreground inline-flex h-8 shrink-0 cursor-pointer appearance-none items-center justify-center rounded-lg border-0 bg-transparent px-2 text-xs transition-colors hover:bg-secondary-background"
-          @click="emit('remove', entry.id)"
+    <SettingsSubCard v-if="entries.length">
+      <ul class="m-0 flex list-none flex-col p-0">
+        <li
+          v-for="(entry, index) in entries"
+          :key="entry.id"
+          :class="
+            cn(
+              'flex items-center justify-between gap-3 py-2',
+              index > 0 && 'border-t border-interface-stroke'
+            )
+          "
         >
-          {{ t('prototype.views.settings.allowlist.remove') }}
-        </button>
-      </li>
-    </ul>
+          <div class="flex min-w-0 flex-col gap-0.5">
+            <span class="truncate text-sm text-text-primary">
+              {{ entry.name }}
+            </span>
+            <span class="text-xs text-muted">
+              {{
+                t('prototype.views.settings.allowlist.addedBy', {
+                  user: addedByLabel(entry.addedByUserId),
+                  date: entry.addedAt
+                })
+              }}
+            </span>
+            <span v-if="entry.note" class="text-xs text-muted italic">
+              {{ entry.note }}
+            </span>
+          </div>
+          <Button
+            v-if="canEdit"
+            variant="muted-textonly"
+            size="sm"
+            @click="emit('remove', entry.id)"
+          >
+            {{ t('prototype.views.settings.allowlist.remove') }}
+          </Button>
+        </li>
+      </ul>
+    </SettingsSubCard>
+
+    <p v-else class="m-0 text-sm text-text-secondary">
+      {{ t('prototype.views.settings.allowlist.empty') }}
+    </p>
 
     <form v-if="canEdit" class="flex gap-2" @submit.prevent="onSubmit">
       <input
         v-model="draft"
         type="text"
         :placeholder="addPlaceholder"
-        class="h-9 flex-1 rounded-lg border border-border-subtle bg-base-background px-3 text-sm outline-none focus:border-base-foreground"
+        class="h-10 flex-1 rounded-lg border border-interface-stroke bg-base-background px-3 text-sm text-text-primary outline-none focus:border-text-primary"
       />
-      <button
+      <Button
+        as="button"
         type="submit"
+        variant="inverted"
+        size="lg"
         :disabled="!draft.trim()"
-        class="inline-flex h-9 cursor-pointer items-center rounded-lg bg-base-foreground px-3 text-sm font-medium text-base-background transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {{ t('prototype.views.settings.allowlist.add') }}
-      </button>
+      </Button>
     </form>
-  </section>
+  </SettingsPanel>
 </template>
 
 <script setup lang="ts">
@@ -130,6 +118,10 @@ import { cn } from '@comfyorg/tailwind-utils'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import Button from '@/components/ui/button/Button.vue'
+
+import SettingsPanel from './settings/SettingsPanel.vue'
+import SettingsSubCard from './settings/SettingsSubCard.vue'
 import type { AllowlistEntry } from '../types'
 
 const {

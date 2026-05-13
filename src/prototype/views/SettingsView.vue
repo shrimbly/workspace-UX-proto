@@ -6,32 +6,36 @@
     concept: ../IA_Plan/wiki/concepts/three-level-permissions.md
              — Admin-only with delegable allowlist editing (edit-allowlists)
     log:     ../prototype/design-decisions.md (2026-05-13)
-             — Workspace settings scope, build order
+             — Workspace settings scope + Settings design system
 
   Tabbed surface so an Admin doesn't see one very long page. Each tab
   visibility is gated by role + delegations; missing tabs collapse the
   strip rather than rendering disabled placeholders.
+
+  Uses the shared SettingsPanel / SettingsSubCard / SettingsTable
+  components and the production Button component for a single design
+  vocabulary across the page.
 -->
 <template>
-  <div class="flex flex-col gap-6">
+  <div class="flex flex-col gap-8">
     <header>
-      <h1 class="text-2xl font-semibold">
+      <h1 class="m-0 text-2xl font-semibold text-text-primary">
         {{ t('prototype.views.settings.title') }}
       </h1>
-      <p class="mt-1 text-sm text-muted-foreground">
+      <p class="mt-1 text-sm text-text-secondary">
         {{ t('prototype.views.settings.subtitle') }}
       </p>
     </header>
 
     <div
       v-if="isGuest"
-      class="rounded-xl border border-dashed border-border-subtle p-12 text-center text-sm text-muted-foreground"
+      class="rounded-2xl border border-dashed border-interface-stroke p-12 text-center text-sm text-text-secondary"
     >
       {{ t('prototype.views.settings.guestEmpty') }}
     </div>
 
     <template v-else>
-      <nav class="flex gap-1 border-b border-border-subtle" role="tablist">
+      <nav class="flex gap-1 border-b border-interface-stroke" role="tablist">
         <button
           v-for="tab in visibleTabs"
           :key="tab.id"
@@ -42,8 +46,8 @@
             cn(
               'inline-flex h-10 cursor-pointer appearance-none items-center gap-2 border-0 border-b-2 bg-transparent px-3 text-sm transition-colors',
               activeTab === tab.id
-                ? 'border-base-foreground text-base-foreground'
-                : 'border-transparent text-muted-foreground hover:text-base-foreground'
+                ? 'border-text-primary text-text-primary'
+                : 'border-transparent text-text-secondary hover:text-text-primary'
             )
           "
           @click="activeTab = tab.id"
@@ -51,7 +55,7 @@
           <span>{{ tab.label }}</span>
           <span
             v-if="tab.count"
-            class="rounded-full bg-secondary-background px-2 py-0.5 text-xs"
+            class="rounded-full bg-secondary-background px-2 py-0.5 text-xs text-text-secondary"
           >
             {{ tab.count }}
           </span>
@@ -59,21 +63,12 @@
       </nav>
 
       <template v-if="activeTab === 'general'">
-        <section :class="panelClass">
-          <header class="flex flex-col gap-0.5">
-            <h2 class="text-base font-semibold text-base-foreground">
-              {{ t('prototype.views.settings.general.heading') }}
-            </h2>
-            <p class="text-xs text-muted-foreground">
-              {{ t('prototype.views.settings.general.description') }}
-            </p>
-          </header>
-
+        <SettingsPanel
+          :title="t('prototype.views.settings.general.heading')"
+          :description="t('prototype.views.settings.general.description')"
+        >
           <div class="flex flex-col gap-1">
-            <label
-              class="text-xs font-medium text-muted-foreground"
-              :for="nameInputId"
-            >
+            <label class="text-xs text-muted" :for="nameInputId">
               {{ t('prototype.views.settings.general.nameLabel') }}
             </label>
             <input
@@ -87,10 +82,7 @@
           </div>
 
           <div class="flex flex-col gap-1">
-            <label
-              class="text-xs font-medium text-muted-foreground"
-              :for="descInputId"
-            >
+            <label class="text-xs text-muted" :for="descInputId">
               {{ t('prototype.views.settings.general.descriptionLabel') }}
             </label>
             <textarea
@@ -112,42 +104,35 @@
 
           <dl class="grid grid-cols-2 gap-4 text-sm">
             <div class="flex flex-col gap-0.5">
-              <dt class="text-xs font-medium text-muted-foreground">
+              <dt class="text-xs text-muted">
                 {{ t('prototype.views.settings.general.typeLabel') }}
               </dt>
               <dd>
                 <span
-                  class="inline-flex h-6 items-center rounded-full bg-secondary-background px-2 text-xs"
+                  class="inline-flex h-6 items-center rounded-full bg-secondary-background px-2 text-xs text-text-primary"
                 >
                   {{ tierLabel }}
                 </span>
               </dd>
             </div>
             <div class="flex flex-col gap-0.5">
-              <dt class="text-xs font-medium text-muted-foreground">
+              <dt class="text-xs text-muted">
                 {{ t('prototype.views.settings.general.ownerLabel') }}
               </dt>
-              <dd class="text-sm">{{ ownerLabel }}</dd>
+              <dd class="text-sm text-text-primary">{{ ownerLabel }}</dd>
             </div>
           </dl>
 
-          <p
-            v-if="!canEditIdentity"
-            class="text-xs text-muted-foreground italic"
-          >
+          <p v-if="!canEditIdentity" class="m-0 text-xs text-muted italic">
             {{ t('prototype.views.settings.general.readOnly') }}
           </p>
-        </section>
+        </SettingsPanel>
 
-        <section v-if="isAdmin || canConfigureWorkspace" :class="panelClass">
-          <header class="flex flex-col gap-0.5">
-            <h2 class="text-base font-semibold text-base-foreground">
-              {{ t('prototype.views.settings.dataTraining.heading') }}
-            </h2>
-            <p class="text-xs text-muted-foreground">
-              {{ t('prototype.views.settings.dataTraining.description') }}
-            </p>
-          </header>
+        <SettingsPanel
+          v-if="isAdmin || canConfigureWorkspace"
+          :title="t('prototype.views.settings.dataTraining.heading')"
+          :description="t('prototype.views.settings.dataTraining.description')"
+        >
           <label class="flex items-start gap-3">
             <input
               :checked="!!workspace?.dataTrainingOptOut"
@@ -160,15 +145,15 @@
               "
             />
             <span class="flex flex-col gap-0.5 text-sm">
-              <span class="font-medium">
+              <span class="text-text-primary">
                 {{ t('prototype.views.settings.dataTraining.toggleLabel') }}
               </span>
-              <span class="text-xs text-muted-foreground">
+              <span class="text-xs text-muted">
                 {{ t('prototype.views.settings.dataTraining.toggleHint') }}
               </span>
             </span>
           </label>
-        </section>
+        </SettingsPanel>
       </template>
 
       <template v-if="activeTab === 'allowlists'">
@@ -233,68 +218,67 @@
           "
         />
 
-        <p
-          v-if="!canEditAllowlists"
-          class="text-xs text-muted-foreground italic"
-        >
+        <p v-if="!canEditAllowlists" class="m-0 text-xs text-muted italic">
           {{ t('prototype.views.settings.allowlist.delegationHint') }}
         </p>
       </template>
 
       <template v-if="activeTab === 'publishing'">
-        <section :class="panelClass">
-          <header class="flex flex-col gap-0.5">
-            <h2 class="text-base font-semibold text-base-foreground">
-              {{ t('prototype.views.settings.hubQueue.heading') }}
-            </h2>
-            <p class="text-xs text-muted-foreground">
-              {{ t('prototype.views.settings.hubQueue.description') }}
-            </p>
-          </header>
-          <div
+        <SettingsPanel
+          :title="t('prototype.views.settings.hubQueue.heading')"
+          :description="t('prototype.views.settings.hubQueue.description')"
+        >
+          <p
             v-if="!fixture.hubSubmissions.length"
-            class="rounded-lg border border-dashed border-border-subtle px-4 py-6 text-center text-xs text-muted-foreground"
+            class="m-0 text-sm text-text-secondary"
           >
             {{ t('prototype.views.settings.hubQueue.empty') }}
-          </div>
-          <ul v-else class="m-0 flex list-none flex-col gap-2 p-0">
-            <li
-              v-for="sub in fixture.hubSubmissions"
-              :key="sub.id"
-              class="flex items-center justify-between gap-3 rounded-lg border border-border-subtle bg-base-background px-3 py-2"
-            >
-              <div class="flex min-w-0 flex-col gap-0.5">
-                <span class="truncate text-sm font-medium">{{
-                  sub.assetName
-                }}</span>
-                <span class="text-xs text-muted-foreground">
-                  {{
-                    t('prototype.views.settings.hubQueue.submittedBy', {
-                      user: addedByLabel(sub.submittedByUserId),
-                      date: sub.submittedAt
-                    })
-                  }}
-                </span>
-              </div>
-              <div class="inline-flex shrink-0 gap-1">
-                <button
-                  type="button"
-                  class="inline-flex h-8 cursor-pointer appearance-none items-center justify-center rounded-lg border border-border-subtle bg-transparent px-3 text-xs transition-colors hover:bg-secondary-background"
-                  @click="personaStore.rejectHubSubmission(sub.id)"
-                >
-                  {{ t('prototype.views.settings.hubQueue.reject') }}
-                </button>
-                <button
-                  type="button"
-                  class="inline-flex h-8 cursor-pointer items-center justify-center rounded-lg bg-base-foreground px-3 text-xs font-medium text-base-background transition-opacity hover:opacity-90"
-                  @click="personaStore.approveHubSubmission(sub.id)"
-                >
-                  {{ t('prototype.views.settings.hubQueue.approve') }}
-                </button>
-              </div>
-            </li>
-          </ul>
-        </section>
+          </p>
+          <SettingsSubCard v-else>
+            <ul class="m-0 flex list-none flex-col p-0">
+              <li
+                v-for="(sub, index) in fixture.hubSubmissions"
+                :key="sub.id"
+                :class="
+                  cn(
+                    'flex items-center justify-between gap-3 py-2',
+                    index > 0 && 'border-t border-interface-stroke'
+                  )
+                "
+              >
+                <div class="flex min-w-0 flex-col gap-0.5">
+                  <span class="truncate text-sm text-text-primary">
+                    {{ sub.assetName }}
+                  </span>
+                  <span class="text-xs text-muted">
+                    {{
+                      t('prototype.views.settings.hubQueue.submittedBy', {
+                        user: addedByLabel(sub.submittedByUserId),
+                        date: sub.submittedAt
+                      })
+                    }}
+                  </span>
+                </div>
+                <div class="inline-flex shrink-0 gap-2">
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    @click="personaStore.rejectHubSubmission(sub.id)"
+                  >
+                    {{ t('prototype.views.settings.hubQueue.reject') }}
+                  </Button>
+                  <Button
+                    variant="inverted"
+                    size="lg"
+                    @click="personaStore.approveHubSubmission(sub.id)"
+                  >
+                    {{ t('prototype.views.settings.hubQueue.approve') }}
+                  </Button>
+                </div>
+              </li>
+            </ul>
+          </SettingsSubCard>
+        </SettingsPanel>
       </template>
 
       <template v-if="activeTab === 'billing' && fixture.billing">
@@ -317,15 +301,11 @@
       </template>
 
       <template v-if="activeTab === 'advanced'">
-        <section v-if="canTransferOwnership" :class="panelClass">
-          <header class="flex flex-col gap-0.5">
-            <h2 class="text-base font-semibold text-base-foreground">
-              {{ t('prototype.views.settings.ownership.heading') }}
-            </h2>
-            <p class="text-xs text-muted-foreground">
-              {{ t('prototype.views.settings.ownership.description') }}
-            </p>
-          </header>
+        <SettingsPanel
+          v-if="canTransferOwnership"
+          :title="t('prototype.views.settings.ownership.heading')"
+          :description="t('prototype.views.settings.ownership.description')"
+        >
           <div class="flex items-center gap-2">
             <select
               v-model="transferTargetId"
@@ -342,48 +322,39 @@
                 {{ admin.name }} ({{ admin.email }})
               </option>
             </select>
-            <button
-              type="button"
+            <Button
+              variant="inverted"
+              size="lg"
               :disabled="!transferTargetId"
-              class="inline-flex h-9 cursor-pointer items-center rounded-lg bg-base-foreground px-3 text-sm font-medium text-base-background transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
               @click="onTransferOwnership"
             >
               {{ t('prototype.views.settings.ownership.transfer') }}
-            </button>
+            </Button>
           </div>
-          <p
-            v-if="!otherAdmins.length"
-            class="text-xs text-muted-foreground italic"
-          >
+          <p v-if="!otherAdmins.length" class="m-0 text-xs text-muted italic">
             {{ t('prototype.views.settings.ownership.noTargets') }}
           </p>
-          <p class="text-xs text-muted-foreground italic">
+          <p class="m-0 text-xs text-muted italic">
             {{ t('prototype.views.settings.ownership.billingNote') }}
           </p>
-        </section>
+        </SettingsPanel>
 
-        <section
+        <SettingsPanel
           v-if="canDeleteWorkspace"
-          :class="cn(panelClass, 'border-danger-foreground/40 bg-danger/5')"
+          :title="t('prototype.views.settings.danger.heading')"
+          :description="t('prototype.views.settings.danger.description')"
         >
-          <header class="flex flex-col gap-0.5">
-            <h2 class="text-danger-foreground text-base font-semibold">
-              {{ t('prototype.views.settings.danger.heading') }}
-            </h2>
-            <p class="text-xs text-muted-foreground">
-              {{ t('prototype.views.settings.danger.description') }}
-            </p>
-          </header>
           <div>
-            <button
-              type="button"
-              class="text-danger-foreground border-danger-foreground/40 inline-flex h-9 cursor-pointer items-center rounded-lg border bg-transparent px-3 text-sm font-medium transition-colors hover:bg-secondary-background"
+            <Button
+              variant="destructive-textonly"
+              size="lg"
+              class="border border-destructive-background/40"
               @click="onDelete"
             >
               {{ t('prototype.views.settings.danger.deleteButton') }}
-            </button>
+            </Button>
           </div>
-        </section>
+        </SettingsPanel>
       </template>
     </template>
   </div>
@@ -395,18 +366,20 @@ import { storeToRefs } from 'pinia'
 import { computed, ref, useId, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import Button from '@/components/ui/button/Button.vue'
+
 import AllowlistEditor from '../components/AllowlistEditor.vue'
 import BillingSection from '../components/BillingSection.vue'
 import MemberCreditLimitsSection from '../components/MemberCreditLimitsSection.vue'
+import SettingsPanel from '../components/settings/SettingsPanel.vue'
+import SettingsSubCard from '../components/settings/SettingsSubCard.vue'
 import { usePrototypePersonaStore } from '../stores/personaStore'
 import type { WorkspaceRole } from '../types'
 
 type TabId = 'general' | 'allowlists' | 'publishing' | 'billing' | 'advanced'
 
-const panelClass =
-  'flex flex-col gap-4 rounded-xl border border-border-subtle bg-modal-card-background p-5'
 const inputClass =
-  'h-9 rounded-lg border border-border-subtle bg-base-background px-3 text-sm outline-none focus:border-base-foreground disabled:cursor-not-allowed disabled:opacity-60'
+  'h-10 rounded-lg border border-interface-stroke bg-base-background px-3 text-sm text-text-primary outline-none focus:border-text-primary disabled:cursor-not-allowed disabled:opacity-60'
 
 const { t } = useI18n()
 const personaStore = usePrototypePersonaStore()
